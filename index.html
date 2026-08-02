@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lucky Tex — Fabric Intelligence Executive Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+:root{--bg:#07111f;--panel:rgba(13,29,51,.86);--line:rgba(139,180,225,.14);--text:#eef5ff;--muted:#93a8c2;--blue:#4aa5ff;--cyan:#39dfd0;--gold:#ffd06a;--rose:#ff8fb3;--font-head:'Sora',Manrope,Segoe UI,Arial,sans-serif;--font-body:'Manrope',Inter,Segoe UI,Arial,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;--radius:16px}
+*{box-sizing:border-box}html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}body{margin:0;background:#050b14;color:var(--text);font-family:var(--font-body);letter-spacing:.1px}
+h1,h2,h3,.brand b,.logo,.card b,.report b,.eyebrow{font-family:var(--font-head)}
+h1,h2{font-weight:800;letter-spacing:-.4px}h3{font-weight:700;letter-spacing:-.1px}
+.card b,.report b,.barval,.detail b,.verify b{font-family:var(--font-mono)}
+[data-theme="light"]{--bg:#eef3f9;--panel:rgba(255,255,255,.86);--line:rgba(20,50,90,.12);--text:#0e2038;--muted:#5a6f8a}
+[data-theme="light"] body{background:#e7edf5}
+[data-theme="light"] body:before{opacity:.35}
+[data-theme="light"] .sidebar{background:rgba(255,255,255,.92)}
+[data-theme="light"] .card:after{background:rgba(38,127,240,.08)}
+[data-theme="light"] td{color:#243348}
+[data-theme="light"] .track{background:#dbe6f3}
+
+.app{display:flex;min-height:100vh}.sidebar{width:250px;position:fixed;inset:0 auto 0 0;background:rgba(3,12,23,.9);backdrop-filter:blur(18px);border-right:1px solid var(--line);padding:20px 15px;z-index:10}
+.brand{display:flex;gap:12px;align-items:center;padding:5px 8px 25px;border-bottom:1px solid var(--line);margin-bottom:20px}.logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-weight:900;background:linear-gradient(135deg,#3d96ff,#36dfd0);color:#03111c;box-shadow:0 12px 35px rgba(60,150,255,.3)}.brand b{font-size:14px}.brand small{display:block;color:var(--muted);font-size:9px;margin-top:4px}
+.nav{width:100%;padding:13px 14px;margin:4px 0;border:1px solid transparent;border-radius:11px;background:transparent;color:#9eb2ca;text-align:left;cursor:pointer;font-size:12px}.nav:hover{background:rgba(74,165,255,.08);color:#fff}.nav.active{background:linear-gradient(90deg,rgba(74,165,255,.2),rgba(57,223,208,.08));border-color:rgba(74,165,255,.25);color:#fff;box-shadow:inset 3px 0 0 var(--blue)}.nav span{margin-left:9px}.sidefoot{position:absolute;bottom:24px;left:24px;color:#637b98;font-size:9px;letter-spacing:2px;line-height:1.7}
+main{margin-left:250px;width:calc(100% - 250px);padding:25px 32px 60px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.eyebrow{font-size:9px;letter-spacing:2.4px;color:var(--cyan);font-weight:800}h1{font-size:27px;margin:5px 0}h2{font-size:27px;margin:5px 0}h3{font-size:14px;margin:0 0 15px}.sub{font-size:11px;color:var(--muted);line-height:1.6}.actions{display:flex;gap:9px}button,.btn{font-family:inherit}.btn{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.045);color:#fff;cursor:pointer;font-weight:700;font-size:11px}.btn.primary{background:linear-gradient(135deg,#267ff0,#18c9bf);border:0;color:#03121c}
+.page{display:none}.page.active{display:block}.hero{min-height:230px;border:1px solid var(--line);border-radius:22px;padding:31px;background:linear-gradient(135deg,rgba(20,72,130,.64),rgba(7,28,50,.74));box-shadow:0 25px 70px rgba(0,0,0,.3);position:relative;overflow:hidden}.hero:after{content:"FABRIC";position:absolute;right:-25px;bottom:-42px;font-size:105px;font-weight:900;color:rgba(255,255,255,.035);letter-spacing:10px}.hero h2{font-size:34px;max-width:700px}.hero p{max-width:680px;color:#b7cadf;font-size:12px;line-height:1.7}.badge{display:inline-block;margin-top:10px;padding:7px 10px;border-radius:99px;background:rgba(57,223,208,.1);border:1px solid rgba(57,223,208,.25);color:#7bf4e8;font-size:9px;font-weight:800;letter-spacing:1px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:18px 0}.card,.panel,.report{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 55px rgba(0,0,0,.22);backdrop-filter:blur(14px)}.card{padding:19px;position:relative;overflow:hidden}.card:after{content:"";position:absolute;right:-25px;top:-25px;width:75px;height:75px;border-radius:50%;background:rgba(74,165,255,.08)}.card small,.report small{color:var(--muted);font-size:10px}.card b{display:block;font-size:27px;margin:9px 0 4px}.card span{font-size:9px;color:#7188a5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{padding:19px;margin-bottom:16px}.panelhead{display:flex;justify-content:space-between;align-items:center}.bars{display:flex;flex-direction:column;gap:10px}.bar{display:grid;grid-template-columns:125px 1fr 70px;gap:8px;align-items:center;font-size:10px}.track{height:8px;background:#09182a;border-radius:99px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#4198ff,#39dfd0);border-radius:99px}.barval{text-align:right;font-weight:800}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:9px;margin:18px 0}input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:rgba(7,20,35,.92);color:#fff;outline:none}.result{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin:8px 2px}.result b{color:var(--cyan)}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:11px}table{width:100%;min-width:850px;border-collapse:collapse}th{padding:12px;text-align:left;background:rgba(74,165,255,.08);color:#91a9c5;font-size:9px;text-transform:uppercase;letter-spacing:1px}td{padding:12px;border-top:1px solid rgba(139,180,225,.08);font-size:10px;color:#dbe8f6}tr:hover{background:rgba(74,165,255,.05);cursor:pointer}
+.reportgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}.report{padding:19px}.report b{display:block;font-size:23px;margin-top:8px}.verify{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.verify div{padding:13px;background:rgba(255,255,255,.035);border-radius:10px}.verify small{display:block;color:var(--muted);font-size:9px}.verify b{font-size:14px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:50;align-items:center;justify-content:center;padding:20px}.modal.open{display:flex}.modalbox{width:min(700px,100%);max-height:85vh;overflow:auto;background:#0b1a2d;border:1px solid var(--line);border-radius:20px;padding:23px}.modaltop{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.detailgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail{padding:12px;background:rgba(255,255,255,.035);border-radius:9px}.detail small{display:block;color:#7890ad;font-size:9px;margin-bottom:5px}.detail b{font-size:12px}
+.toast{display:none;position:fixed;right:22px;bottom:22px;z-index:100;background:#102941;border:1px solid rgba(57,223,208,.3);padding:12px 15px;border-radius:10px;font-size:11px}.toast.show{display:block}
+@media(max-width:950px){.sidebar{width:70px}.brand div:not(.logo),.nav span,.sidefoot{display:none}.brand{justify-content:center}main{margin-left:70px;width:calc(100% - 70px);padding:20px}.cards{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}.reportgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){main{padding:14px!important}.cards,.filters,.reportgrid,.verify,.detailgrid{grid-template-columns:1fr}.filters input{grid-column:auto}.topbar{flex-direction:column;align-items:flex-start;gap:12px}.hero h2{font-size:26px}}
+@media print{.sidebar,.topbar,.filters,.btn{display:none!important}main{margin:0;width:100%}body{background:#fff;color:#111}.page{display:none}.page.active{display:block}.panel,.card,.report{box-shadow:none;background:#fff;color:#111}}
+
+
+/* LUCKY TEX EXECUTIVE EDITION — REFINED INTERACTION SYSTEM */
+.btn,.nav{position:relative;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease}
+.btn:hover{transform:translateY(-1px);border-color:rgba(74,165,255,.4);box-shadow:0 10px 26px rgba(4,20,40,.35)}
+.btn:active{transform:translateY(0)}
+.btn.primary:hover{box-shadow:0 12px 30px rgba(24,150,180,.35)}
+.nav:hover{transform:translateX(2px)}
+.nav.active{box-shadow:inset 3px 0 0 var(--blue),0 0 16px rgba(74,165,255,.08)}
+.btn:before{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);transform:skewX(-20deg);transition:left .6s ease;pointer-events:none}
+.btn:hover:before{left:150%}
+.hero,.panel,.card,.report{background:linear-gradient(145deg,rgba(5,19,37,.80),rgba(7,23,40,.68));border-color:rgba(140,190,240,.20);transition:transform .2s ease,box-shadow .2s ease}
+.card:hover,.report:hover{transform:translateY(-3px);box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.stat-trend{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:800;padding:3px 7px;border-radius:99px;margin-top:8px}
+.stat-trend.up{background:rgba(57,223,208,.12);color:#7bf4e8}
+.stat-trend.warn{background:rgba(255,143,179,.12);color:var(--rose)}
+th[data-sort]{cursor:pointer;user-select:none;white-space:nowrap}
+th[data-sort]:hover{color:#c7dcf5}
+th .sort-ico{opacity:.4;margin-left:4px;font-size:8px}
+th.sort-active .sort-ico{opacity:1;color:var(--cyan)}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 4px;font-size:10px;color:var(--muted)}
+.pager .pbtns{display:flex;gap:6px}
+.pager button{padding:7px 11px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff;cursor:pointer;font-size:10px;font-family:inherit}
+.pager button:disabled{opacity:.35;cursor:not-allowed}
+.pager button.pnum.active{background:linear-gradient(135deg,#267ff0,#18c9bf);border:0;color:#03121c;font-weight:800}
+.insights{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+.insight{padding:16px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(5,19,37,.8),rgba(7,23,40,.68));display:flex;gap:12px;align-items:flex-start}
+.insight .ico{width:34px;height:34px;flex:none;border-radius:10px;display:grid;place-items:center;font-size:15px;background:rgba(74,165,255,.12)}
+.insight b{display:block;font-size:12px;margin-bottom:3px}
+.insight span{font-size:10px;color:var(--muted);line-height:1.5}
+.donutwrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.donutlegend{display:flex;flex-direction:column;gap:8px;flex:1;min-width:160px}
+.donutlegend div{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted)}
+.donutlegend .sw{width:9px;height:9px;border-radius:3px;flex:none}
+.themebtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.045);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:14px}
+.countup{display:inline-block}
+body:before{content:"";position:fixed;inset:0;z-index:-5;background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3NjgwIiBoZWlnaHQ9IjQzMjAiIHZpZXdCb3g9IjAgMCA3NjgwIDQzMjAiPgo8ZGVmcz4KIDxsaW5lYXJHcmFkaWVudCBpZD0ic2t5IiB4Mj0iMCIgeTI9IjEiPgogIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzA1MGUxYyIvPgogIDxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjMGEyMDM4Ii8+CiAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMGQzYTYwIi8+CiA8L2xpbmVhckdyYWRpZW50PgogPGxpbmVhckdyYWRpZW50IGlkPSJmYWN0b3J5RmFyIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIHN0b3AtY29sb3I9IiMxYzQwNWUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwYTIwMzgiLz48L2xpbmVhckdyYWRpZW50PgogPGxpbmVhckdyYWRpZW50IGlkPSJmYWN0b3J5IiB4Mj0iMCIgeTI9IjEiPjxzdG9wIHN0b3AtY29sb3I9IiMyYjVhODAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwYjIyMzgiLz48L2xpbmVhckdyYWRpZW50PgogPGxpbmVhckdyYWRpZW50IGlkPSJmYWN0b3J5TmVhciIgeDI9IjAiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjMGUyYzQ2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDUxMzFmIi8+PC9saW5lYXJHcmFkaWVudD4KIDxsaW5lYXJHcmFkaWVudCBpZD0iZ2xhc3MiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjN2ZlNGZmIiBzdG9wLW9wYWNpdHk9Ii4yNiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBiMzg1NSIgc3RvcC1vcGFjaXR5PSIuMDQiLz48L2xpbmVhckdyYWRpZW50PgogPGxpbmVhckdyYWRpZW50IGlkPSJoYXplIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIHN0b3AtY29sb3I9IiMxZDYzYTgiIHN0b3Atb3BhY2l0eT0iMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFkNjNhOCIgc3RvcC1vcGFjaXR5PSIuMjIiLz48L2xpbmVhckdyYWRpZW50PgogPHJhZGlhbEdyYWRpZW50IGlkPSJtb29uIiBjeD0iNTAlIiBjeT0iNTAlIiByPSI1MCUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2VhZjlmZiIgc3RvcC1vcGFjaXR5PSIuOSIvPjxzdG9wIG9mZnNldD0iLjU1IiBzdG9wLWNvbG9yPSIjYmZlOWZmIiBzdG9wLW9wYWNpdHk9Ii4yOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2JmZTlmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PC9yYWRpYWxHcmFkaWVudD4KIDxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iMjIwIiBoZWlnaHQ9IjIyMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTIyMCAwSDBWMjIwIiBmaWxsPSJub25lIiBzdHJva2U9IiM4ZGU2ZmYiIHN0cm9rZS1vcGFjaXR5PSIuMDYiLz48L3BhdHRlcm4+CiA8ZmlsdGVyIGlkPSJnbG93Ij48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI3MiIvPjwvZmlsdGVyPgogPGZpbHRlciBpZD0iZ2xvd1NvZnQiPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjM0Ii8+PC9maWx0ZXI+CiA8ZmlsdGVyIGlkPSJnbG93VGlnaHQiPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjEwIi8+PC9maWx0ZXI+CiA8cmFkaWFsR3JhZGllbnQgaWQ9InZpZ25ldHRlIiBjeD0iNTAlIiBjeT0iNDYlIiByPSI3NSUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzAwMCIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNzIiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwMCIgc3RvcC1vcGFjaXR5PSIuNTUiLz48L3JhZGlhbEdyYWRpZW50Pgo8L2RlZnM+Cgo8cmVjdCB3aWR0aD0iNzY4MCIgaGVpZ2h0PSI0MzIwIiBmaWxsPSJ1cmwoI3NreSkiLz4KCjwhLS0gc29mdCBtb29uIC8ga2V5IGxpZ2h0IC0tPgo8Y2lyY2xlIGN4PSI2MjUwIiBjeT0iNTIwIiByPSIyNjAiIGZpbGw9InVybCgjbW9vbikiLz4KPGNpcmNsZSBjeD0iNjI1MCIgY3k9IjUyMCIgcj0iMTIwIiBmaWxsPSIjZjJmY2ZmIiBvcGFjaXR5PSIuNTUiIGZpbHRlcj0idXJsKCNnbG93VGlnaHQpIi8+Cgo8IS0tIGF0bW9zcGhlcmljIGdsb3dzIC0tPgo8Y2lyY2xlIGN4PSI2NDAwIiBjeT0iNjQwIiByPSIxMDAwIiBmaWxsPSIjMjNkN2QwIiBvcGFjaXR5PSIuMTMiIGZpbHRlcj0idXJsKCNnbG93KSIvPgo8Y2lyY2xlIGN4PSIxMjAwIiBjeT0iNzIwIiByPSI5MDAiIGZpbGw9IiMyZDhjZmYiIG9wYWNpdHk9Ii4xNyIgZmlsdGVyPSJ1cmwoI2dsb3cpIi8+CjxjaXJjbGUgY3g9IjM4MDAiIGN5PSIzODAiIHI9IjcwMCIgZmlsbD0iIzVmYzdmZiIgb3BhY2l0eT0iLjA4IiBmaWx0ZXI9InVybCgjZ2xvdykiLz4KCjwhLS0gc3RhcnMgLS0+CjxnIGZpbGw9IiNlYWY3ZmYiPgogPGNpcmNsZSBjeD0iNDIwIiBjeT0iMTgwIiByPSIzLjIiIG9wYWNpdHk9Ii41NSIvPjxjaXJjbGUgY3g9Ijk4MCIgY3k9IjI2MCIgcj0iMi40IiBvcGFjaXR5PSIuNCIvPjxjaXJjbGUgY3g9IjE2MjAiIGN5PSIxNDAiIHI9IjMiIG9wYWNpdHk9Ii41Ii8+CiA8Y2lyY2xlIGN4PSIyMzgwIiBjeT0iMjIwIiByPSIyLjYiIG9wYWNpdHk9Ii40NSIvPjxjaXJjbGUgY3g9IjMwMjAiIGN5PSIxMjAiIHI9IjMuNCIgb3BhY2l0eT0iLjU1Ii8+PGNpcmNsZSBjeD0iMzY0MCIgY3k9IjI0MCIgcj0iMi40IiBvcGFjaXR5PSIuNCIvPgogPGNpcmNsZSBjeD0iNDQ2MCIgY3k9IjE2MCIgcj0iMyIgb3BhY2l0eT0iLjUiLz48Y2lyY2xlIGN4PSI1MDgwIiBjeT0iMjYwIiByPSIyLjYiIG9wYWNpdHk9Ii40MiIvPjxjaXJjbGUgY3g9IjU2ODAiIGN5PSIxNTAiIHI9IjMiIG9wYWNpdHk9Ii40OCIvPgogPGNpcmNsZSBjeD0iNzE4MCIgY3k9IjIyMCIgcj0iMi44IiBvcGFjaXR5PSIuNDUiLz48Y2lyY2xlIGN4PSI2OTAwIiBjeT0iMzgwIiByPSIyLjIiIG9wYWNpdHk9Ii4zNSIvPjxjaXJjbGUgY3g9IjIwNDAiIGN5PSIzNDAiIHI9IjIiIG9wYWNpdHk9Ii4zIi8+CiA8Y2lyY2xlIGN4PSI0OTAwIiBjeT0iMzQwIiByPSIyLjIiIG9wYWNpdHk9Ii4zMiIvPjxjaXJjbGUgY3g9IjcwMCIgY3k9IjQyMCIgcj0iMiIgb3BhY2l0eT0iLjMiLz48Y2lyY2xlIGN4PSI1OTAwIiBjeT0iNDIwIiByPSIyLjQiIG9wYWNpdHk9Ii4zOCIvPgo8L2c+Cgo8IS0tIGdyb3VuZCAtLT4KPHJlY3QgeT0iMjEyMCIgd2lkdGg9Ijc2ODAiIGhlaWdodD0iMjIwMCIgZmlsbD0iIzA0MTAxZCIvPgoKPCEtLSBmYXIgc2t5bGluZSAtLT4KPHBhdGggZD0iTTAgMjMyMCBMNDIwIDIwMjAgOTAwIDIxNDAgMTUwMCAxOTAwIDIyNjAgMjA4MCAzMTQwIDE3ODAgMzY2MCAxOTgwIDQ0NjAgMTcyMCA1MTQwIDE5ODAgNTc2MCAxNzQwIDY0NDAgMjAyMCA3NjgwIDE3ODAgVjQzMjAgSDBaIiBmaWxsPSJ1cmwoI2ZhY3RvcnlGYXIpIiBvcGFjaXR5PSIuODUiLz4KCjwhLS0gc3R5bGl6ZWQgTHVja3kgVGV4IHRleHRpbGUgbWFudWZhY3R1cmluZyBjb21wbGV4IOKAlCBtaWQgbGF5ZXIgLS0+CjxwYXRoIGQ9Ik0wIDI0ODAgTDY4MCAyMDAwIDE0MDAgMjE4MCAyMTIwIDE4MDAgMzA0MCAyMDgwIDM4NDAgMTU2MCA0NzYwIDIwMDAgNTU2MCAxNjQwIDY0NDAgMjA4MCA3NjgwIDE3MjAgVjQzMjAgSDBaIiBmaWxsPSJ1cmwoI2ZhY3RvcnkpIi8+Cgo8IS0tIG5lYXIgaW5kdXN0cmlhbCBibG9jayAtLT4KPHBhdGggZD0iTTAgMjc2MCBMOTIwIDIyODAgMTkyMCAyNTAwIDI4MDAgMjA0MCAzODQwIDI0NDAgNDc2MCAyMDAwIDU4MDAgMjQ0MCA2NzIwIDIwODAgNzY4MCAyNDAwIFY0MzIwIEgwWiIgZmlsbD0idXJsKCNmYWN0b3J5TmVhcikiLz4KCjwhLS0gZ2xhc3MgZmFjYWRlcyAtLT4KPGcgZmlsbD0idXJsKCNnbGFzcykiIHN0cm9rZT0iIzhmZTlmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4zIj4KIDxyZWN0IHg9IjMyMCIgeT0iMjY4MCIgd2lkdGg9IjE2ODAiIGhlaWdodD0iMTAwMCIgcng9IjMyIi8+CiA8cmVjdCB4PSIyMTIwIiB5PSIyNDQwIiB3aWR0aD0iMjA4MCIgaGVpZ2h0PSIxMjQwIiByeD0iMzIiLz4KIDxyZWN0IHg9IjQzMjAiIHk9IjI2MDAiIHdpZHRoPSIxNjQwIiBoZWlnaHQ9IjEwODAiIHJ4PSIzMiIvPgogPHJlY3QgeD0iNjA4MCIgeT0iMjQwMCIgd2lkdGg9IjEyODAiIGhlaWdodD0iMTI4MCIgcng9IjMyIi8+CjwvZz4KCjwhLS0gd2luZG93IGxpZ2h0IGdyaWQgKG5lYXIgYmxvY2spIC0tPgo8ZyBmaWxsPSIjN2ZmMGZmIiBvcGFjaXR5PSIuMjgiPgogPHJlY3QgeD0iNDgwIiB5PSIyODQwIiB3aWR0aD0iMjIwIiBoZWlnaHQ9IjY0MCIvPjxyZWN0IHg9Ijg0MCIgeT0iMjg0MCIgd2lkdGg9IjIyMCIgaGVpZ2h0PSI2NDAiLz48cmVjdCB4PSIxMjAwIiB5PSIyODQwIiB3aWR0aD0iMjIwIiBoZWlnaHQ9IjY0MCIvPjxyZWN0IHg9IjE1NjAiIHk9IjI4NDAiIHdpZHRoPSIyMjAiIGhlaWdodD0iNjQwIi8+CiA8cmVjdCB4PSIyMzYwIiB5PSIyNjQwIiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjgwMCIvPjxyZWN0IHg9IjI3NjAiIHk9IjI2NDAiIHdpZHRoPSIyNDAiIGhlaWdodD0iODAwIi8+PHJlY3QgeD0iMzE2MCIgeT0iMjY0MCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSI4MDAiLz48cmVjdCB4PSIzNTYwIiB5PSIyNjQwIiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjgwMCIvPgogPHJlY3QgeD0iNDU2MCIgeT0iMjgwMCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSI2NDAiLz48cmVjdCB4PSI0OTYwIiB5PSIyODAwIiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjY0MCIvPjxyZWN0IHg9IjUzNjAiIHk9IjI4MDAiIHdpZHRoPSIyNDAiIGhlaWdodD0iNjQwIi8+CiA8cmVjdCB4PSI2MzIwIiB5PSIyNjAwIiB3aWR0aD0iMjQwIiBoZWlnaHQ9Ijg0MCIvPjxyZWN0IHg9IjY3MjAiIHk9IjI2MDAiIHdpZHRoPSIyNDAiIGhlaWdodD0iODQwIi8+CjwvZz4KPCEtLSB3YXJtIGFjY2VudCB3aW5kb3dzIGZvciBkZXB0aCAtLT4KPGcgZmlsbD0iI2ZmYzk4YSIgb3BhY2l0eT0iLjE2Ij4KIDxyZWN0IHg9IjYwMCIgeT0iMjg0MCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjY0MCIvPjxyZWN0IHg9IjEzMjAiIHk9IjI4NDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2NDAiLz4KIDxyZWN0IHg9IjI2MDAiIHk9IjI2NDAiIHdpZHRoPSI3MCIgaGVpZ2h0PSI4MDAiLz48cmVjdCB4PSIzNDAwIiB5PSIyNjQwIiB3aWR0aD0iNzAiIGhlaWdodD0iODAwIi8+CiA8cmVjdCB4PSI1MTAwIiB5PSIyODAwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjQwIi8+PHJlY3QgeD0iNjU2MCIgeT0iMjYwMCIgd2lkdGg9IjcwIiBoZWlnaHQ9Ijg0MCIvPgo8L2c+Cgo8IS0tIGNoaW1uZXlzIC8gdmVudHMgd2l0aCBzb2Z0IGdsb3cgLS0+CjxnIGZpbGw9IiMwYTIzMzgiPgogPHJlY3QgeD0iMjUwMCIgeT0iMTk2MCIgd2lkdGg9IjkwIiBoZWlnaHQ9IjQ4MCIvPjxyZWN0IHg9IjQ5MDAiIHk9IjE3ODAiIHdpZHRoPSI5MCIgaGVpZ2h0PSI2MjAiLz48cmVjdCB4PSI2NTYwIiB5PSIxOTIwIiB3aWR0aD0iODAiIGhlaWdodD0iNDgwIi8+CjwvZz4KPGcgZmlsbD0iIzdmZTRmZiIgb3BhY2l0eT0iLjE4IiBmaWx0ZXI9InVybCgjZ2xvd1NvZnQpIj4KIDxjaXJjbGUgY3g9IjI1NDUiIGN5PSIxOTQwIiByPSI2MCIvPjxjaXJjbGUgY3g9IjQ5NDUiIGN5PSIxNzYwIiByPSI3MCIvPjxjaXJjbGUgY3g9IjY2MDAiIGN5PSIxOTAwIiByPSI1NSIvPgo8L2c+Cgo8IS0tIHJpc2luZyBoYXplIG5lYXIgZ3JvdW5kIC0tPgo8cmVjdCB5PSIzNDAwIiB3aWR0aD0iNzY4MCIgaGVpZ2h0PSI5MjAiIGZpbGw9InVybCgjaGF6ZSkiLz4KCjwhLS0gZmxvYXRpbmcgZHVzdCAvIGxpZ2h0IHBhcnRpY2xlcyAtLT4KPGcgZmlsbD0iI2U2ZmFmZiIgb3BhY2l0eT0iLjY1Ij4KIDxjaXJjbGUgY3g9IjM2MCIgY3k9IjIzNjAiIHI9IjciLz48Y2lyY2xlIGN4PSIxMjAwIiBjeT0iMjIwMCIgcj0iNiIvPjxjaXJjbGUgY3g9IjIwODAiIGN5PSIyMDAwIiByPSI3Ii8+CiA8Y2lyY2xlIGN4PSIzMjAwIiBjeT0iMTg4MCIgcj0iOCIvPjxjaXJjbGUgY3g9IjQ0ODAiIGN5PSIxODIwIiByPSI2Ii8+PGNpcmNsZSBjeD0iNTgwMCIgY3k9IjE4ODAiIHI9IjciLz4KIDxjaXJjbGUgY3g9IjcwMDAiIGN5PSIyMDAwIiByPSI2Ii8+PGNpcmNsZSBjeD0iNjEwMCIgY3k9IjIyNDAiIHI9IjUiLz48Y2lyY2xlIGN4PSI4MDAiIGN5PSIyNTYwIiByPSI1Ii8+CjwvZz4KCjwhLS0gZmluZSB0ZXh0dXJlIGdyaWQgLS0+CjxyZWN0IHdpZHRoPSI3NjgwIiBoZWlnaHQ9IjQzMjAiIGZpbGw9InVybCgjZ3JpZCkiLz4KCjwhLS0gb3ZlcmFsbCBkZXB0aCB0aW50IC0tPgo8cmVjdCB3aWR0aD0iNzY4MCIgaGVpZ2h0PSI0MzIwIiBmaWxsPSIjMDIwOTE0IiBvcGFjaXR5PSIuNDIiLz4KCjwhLS0gd29yZG1hcmsgLS0+Cjx0ZXh0IHg9IjM4NDAiIHk9IjEyMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2OCIgZm9udC13ZWlnaHQ9IjkwMCIgbGV0dGVyLXNwYWNpbmc9IjcyIiBmaWxsPSIjZWFmY2ZmIiBvcGFjaXR5PSIuMTQiPkxVQ0tZIFRFWDwvdGV4dD4KPHRleHQgeD0iMzg0MCIgeT0iMTQ4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iOTYiIGxldHRlci1zcGFjaW5nPSIzNiIgZmlsbD0iIzhmZWZmZiIgb3BhY2l0eT0iLjI4Ij5URVhUSUxFIOKAoiBGQUJSSUMg4oCiIElOVEVMTElHRU5DRTwvdGV4dD4KCjwhLS0gdmlnbmV0dGUgZm9yIGNpbmVtYXRpYyBkZXB0aCAtLT4KPHJlY3Qgd2lkdGg9Ijc2ODAiIGhlaWdodD0iNDMyMCIgZmlsbD0idXJsKCN2aWduZXR0ZSkiLz4KPC9zdmc+Cg==");background-size:cover;background-position:center center;background-attachment:fixed;filter:saturate(1.12) contrast(1.05)}
+body:after{content:"";position:fixed;inset:0;z-index:-4;background:linear-gradient(180deg,rgba(1,8,18,.34),rgba(1,8,18,.72));pointer-events:none}
+
+/* ---- Login gate ---- */
+.app{display:none}
+body.authed .app{display:flex}
+#loginScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;background:#0a1420}
+body.authed #loginScreen{display:none}
+
+/* ---- Lucky Tex ERP-style LOGON window ---- */
+.logonWindow{width:min(760px,100%);background:#c9cdd3;border-radius:6px;box-shadow:0 40px 100px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.4);overflow:hidden;font-family:var(--font-body)}
+.logonTitlebar{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:linear-gradient(180deg,#8b93a0,#5c6470);color:#fff;font-size:12px;font-weight:700;letter-spacing:.5px}
+.logonTitlebar span{display:flex;align-items:center;gap:6px}
+.logonTitlebar .logonX{width:20px;height:18px;background:linear-gradient(180deg,#e2e2e2,#b9b9b9);color:#333;border-radius:2px;display:grid;place-items:center;font-size:11px;font-weight:900;cursor:pointer}
+.logonHeader{background:linear-gradient(135deg,#0d3a78,#1a5fc4);padding:18px 26px;display:flex;align-items:center;gap:16px;border-bottom:2px solid #0a2b5c}
+.logonHeader .glob{width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3d7fd6,#0b2c63);display:grid;place-items:center;font-size:9px;color:#bcd6ff;font-weight:800;box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.logonWordmark{font-family:var(--font-head);font-weight:800;font-size:34px;letter-spacing:1px;background:linear-gradient(180deg,#ffb26b,#ff7a1a);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+.logonWordmark .lw{display:inline-block;opacity:0;transform:translateY(10px);animation:ltLetterIn .5s cubic-bezier(.2,.8,.25,1) forwards;background:inherit;-webkit-background-clip:inherit;background-clip:inherit;color:inherit}
+@keyframes ltLetterIn{to{opacity:1;transform:translateY(0)}}
+.glob{animation:globPulse 2.6s ease-in-out infinite}
+.logonBtns button.connectBtn{position:relative}
+.logonBtns button.connectBtn .btnSpin{display:none;width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;margin-right:6px;vertical-align:-2px;animation:ltSpin .7s linear infinite}
+.logonBtns button.connectBtn.busy .btnSpin{display:inline-block}
+.logonBtns button.connectBtn.busy .btnLbl{opacity:.85}
+@keyframes ltSpin{to{transform:rotate(360deg)}}
+.logonTag{color:#ff9d4d;font-weight:700;font-size:12px;margin-top:4px}
+.logonBody{display:flex}
+.logonSidebar{width:64px;background:linear-gradient(180deg,#1a5fc4,#0d3a78);display:flex;align-items:center;justify-content:center;padding:16px 0}
+.logonSidebar span{writing-mode:vertical-rl;transform:rotate(180deg);color:#fff;font-weight:800;font-size:15px;letter-spacing:1px;font-family:var(--font-head)}
+.logonForm{flex:1;background:linear-gradient(160deg,#1668d1,#0f4aa6);padding:22px 26px 20px}
+.logonManual{text-align:right;color:#ff5a5a;font-size:10px;font-weight:700;margin-bottom:12px;text-decoration:underline;cursor:default}
+.logonRow{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:12px;margin-bottom:10px}
+.logonRow label{color:#0a1e3d;font-weight:800;font-size:12px;text-align:right;text-shadow:0 1px 0 rgba(255,255,255,.15)}
+.logonRow input{width:100%;padding:9px 10px;border:1px solid #8fa8c9;border-radius:2px;background:#eef3f9;color:#0a1e3d;font-weight:700;font-size:12px;outline:none}
+.logonRow input[readonly]{background:linear-gradient(180deg,#bfe0f5,#9fd0ee);color:#0a2a4a}
+.logonRow input#loginPass{background:#eef3f9}
+.logonerr{display:none;color:#ffd6d6;background:rgba(180,20,20,.35);border:1px solid rgba(255,120,120,.5);padding:6px 10px;border-radius:4px;font-size:10px;font-weight:700;margin:2px 0 12px 132px}
+.logonerr.show{display:block}
+.logonBtns{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.logonBtns button{padding:9px 18px;border-radius:3px;border:1px solid #8b8f96;background:linear-gradient(180deg,#f4f4f4,#d3d5d8);color:#1a1a1a;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit}
+.logonBtns button:hover{background:linear-gradient(180deg,#ffffff,#e2e4e7)}
+.logonBtns button.connectBtn{background:linear-gradient(180deg,#2f8dff,#136fe0);color:#fff;border-color:#0d5bc0}
+.logonFooter{background:#dfe2e6;padding:12px 26px;text-align:right}
+.logonFooter b{display:block;font-size:14px;color:#12325e}
+.logonFooter small{color:#3a4a63;font-size:10px}
+@media(max-width:640px){.logonBody{flex-direction:column}.logonSidebar{width:100%;padding:8px 0}.logonSidebar span{writing-mode:horizontal-tb;transform:none}.logonRow{grid-template-columns:1fr}.logonRow label{text-align:left}.logonerr{margin-left:0}.logonWordmark{font-size:26px}}
+
+/* ---- Stylish login: animated backdrop, entrance, micro-interactions ---- */
+#loginScreen{background:radial-gradient(ellipse at 18% 15%,rgba(38,127,240,.28),transparent 55%),radial-gradient(ellipse at 82% 85%,rgba(57,223,208,.20),transparent 55%),#0a1420;overflow:hidden}
+#loginScreen:before,#loginScreen:after{content:"";position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;pointer-events:none;z-index:0}
+#loginScreen:before{width:360px;height:360px;background:radial-gradient(circle,#2f8dff,transparent 70%);top:-130px;left:-110px;animation:ltOrb1 9s ease-in-out infinite}
+#loginScreen:after{width:320px;height:320px;background:radial-gradient(circle,#39dfd0,transparent 70%);bottom:-120px;right:-100px;animation:ltOrb2 11s ease-in-out infinite}
+@keyframes ltOrb1{0%,100%{transform:translate(0,0)}50%{transform:translate(45px,30px)}}
+@keyframes ltOrb2{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-28px)}}
+/* extra ambient orb + scanning grid for a livelier logon backdrop */
+.loginOrb3{position:absolute;width:260px;height:260px;border-radius:50%;filter:blur(60px);opacity:.35;pointer-events:none;z-index:0;background:radial-gradient(circle,#ffd06a,transparent 70%);top:40%;left:48%;animation:ltOrb3 13s ease-in-out infinite}
+@keyframes ltOrb3{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.25) translate(60px,-40px)}}
+.loginScan{position:absolute;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(120,200,255,.05) 0px,rgba(120,200,255,.05) 1px,transparent 1px,transparent 34px);opacity:.5}
+.loginScan:after{content:"";position:absolute;left:0;right:0;height:140px;background:linear-gradient(180deg,transparent,rgba(90,190,255,.10),transparent);animation:ltScanline 5.5s linear infinite}
+@keyframes ltScanline{0%{top:-140px}100%{top:100%}}
+.loginParticles{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.loginParticles i{position:absolute;bottom:-12px;border-radius:50%;background:rgba(160,220,255,.65);box-shadow:0 0 6px rgba(120,200,255,.7);animation:ltParticleUp linear infinite}
+@keyframes ltParticleUp{0%{transform:translateY(0) translateX(0);opacity:0}8%{opacity:.9}92%{opacity:.7}100%{transform:translateY(-108vh) translateX(var(--drift,20px));opacity:0}}
+.logonWindow{position:relative;z-index:1;animation:logonIn .7s cubic-bezier(.2,.8,.25,1) both}
+@keyframes logonIn{0%{opacity:0;transform:translateY(26px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
+/* rotating gradient outline that gently sweeps around the logon window */
+.logonWindow:before{content:"";position:absolute;inset:-2px;border-radius:8px;padding:2px;background:conic-gradient(from 0deg,#2f8dff,#39dfd0,#ffd06a,#2f8dff);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.55;animation:ltBorderSpin 6s linear infinite;pointer-events:none;z-index:-1}
+@keyframes ltBorderSpin{to{transform:rotate(360deg)}}
+.logonWindow.shake{animation:logonShake .45s ease}
+@keyframes logonShake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(5px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+.logonHeader .glob{animation:globPulse 3.2s ease-in-out infinite}
+@keyframes globPulse{0%,100%{box-shadow:0 6px 16px rgba(0,0,0,.4)}50%{box-shadow:0 6px 28px rgba(47,141,255,.6)}}
+.logonRow input{transition:box-shadow .2s ease,border-color .2s ease,transform .15s ease}
+.logonRow input:focus{border-color:#2f8dff;box-shadow:0 0 0 3px rgba(47,141,255,.25);transform:translateY(-1px)}
+.logonBtns button{transition:transform .15s ease,box-shadow .2s ease}
+.logonBtns button:hover{transform:translateY(-1px)}
+.logonBtns button.connectBtn{box-shadow:0 8px 22px rgba(20,110,220,.35)}
+.logonBtns button.connectBtn:hover{box-shadow:0 12px 30px rgba(20,110,220,.55)}
+
+/* ---- Advanced login: password visibility, remember-me, lockout, meter ---- */
+.pwWrap{position:relative;width:100%}
+.pwWrap input{width:100%;padding-right:34px}
+.pwEye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:24px;height:24px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:#3a5a86;font-size:13px;padding:0}
+.pwEye:hover{color:#0f4aa6}
+.rememberRow{display:flex;align-items:center;justify-content:space-between;margin:2px 0 12px 132px;font-size:10px}
+.rememberRow label{display:flex;align-items:center;gap:6px;color:#0a1e3d;font-weight:700;cursor:pointer}
+.rememberRow input[type=checkbox]{width:13px;height:13px;accent-color:#0f4aa6;cursor:pointer}
+.secureNote{color:#dceeff;font-size:9px;font-weight:700;display:flex;align-items:center;gap:4px;opacity:.85}
+@media(max-width:640px){.rememberRow{margin-left:0;flex-direction:column;align-items:flex-start;gap:6px}}
+.logonerr.lockmode{background:rgba(255,150,40,.22);border-color:rgba(255,170,60,.5);color:#ffe2bf}
+.logonBtns button.connectBtn:disabled,.logonBtns button.connectBtn[disabled]{opacity:.5;cursor:not-allowed;filter:grayscale(.3)}
+.attemptMeter{display:flex;gap:4px;margin:2px 0 10px 132px}
+.attemptMeter span{width:16px;height:4px;border-radius:2px;background:rgba(10,30,60,.18)}
+.attemptMeter span.used{background:#ff5a5a}
+@media(max-width:640px){.attemptMeter{margin-left:0}}
+.lastLoginTag{margin:2px 0 12px 132px;font-size:9px;color:#cfe6ff;font-weight:700;display:flex;align-items:center;gap:5px}
+.lastLoginTag b{color:#7bf4e8}
+@media(max-width:640px){.lastLoginTag{margin-left:0}}
+
+/* ---- OTP / 2FA step ---- */
+#otpStep{display:none}
+.otpMeta{margin:2px 0 12px 132px;font-size:10px;color:#dceeff;line-height:1.6}
+.otpMeta b{color:#7bf4e8}
+#otpInput{letter-spacing:6px;font-weight:800;font-size:15px;text-align:center}
+.otpResendBtn:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:640px){.otpMeta{margin-left:0}}
+
+/* ---- Session security bar (post-login) ---- */
+.secBar{display:flex;align-items:center;gap:6px;font-size:9px;color:#7bf4e8;font-weight:800;letter-spacing:.3px;background:rgba(57,223,208,.1);border:1px solid rgba(57,223,208,.25);padding:6px 10px;border-radius:99px}
+.secBar .sdot{width:6px;height:6px;border-radius:50%;background:#39dfd0;box-shadow:0 0 6px #39dfd0;animation:dotPulse 1.6s ease-in-out infinite}
+
+/* ---- Idle / session-timeout modal ---- */
+#idleModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:400;align-items:center;justify-content:center;padding:20px}
+#idleModal.open{display:flex}
+.idleBox{width:min(380px,100%);background:#0b1a2d;border:1px solid var(--line);border-radius:18px;padding:26px;text-align:center;box-shadow:0 40px 100px rgba(0,0,0,.5);animation:logonIn .4s ease both}
+.idleBox .idleIco{width:52px;height:52px;border-radius:50%;margin:0 auto 14px;background:rgba(255,143,179,.14);border:1px solid rgba(255,143,179,.3);display:grid;place-items:center;font-size:22px}
+.idleBox h3{margin:0 0 8px}
+.idleBox p{color:var(--muted);font-size:11px;line-height:1.6;margin:0 0 6px}
+.idleBox .idleCount{font-family:var(--font-mono);font-size:26px;font-weight:800;color:var(--rose);margin:10px 0}
+.idleBtns{display:flex;gap:10px;justify-content:center;margin-top:14px}
+
+/* ---- Welcome transition screen ---- */
+#welcomeScreen{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 38%,rgba(38,127,240,.35),transparent 60%),#050b14;text-align:center}
+#welcomeScreen.show{display:flex}
+.welcomeBox{opacity:0}
+.welcomeBox.animate{animation:welcomeIn .7s cubic-bezier(.2,.8,.25,1) forwards}
+.welcomeBox.leave{animation:welcomeOut .5s ease forwards}
+@keyframes welcomeIn{0%{opacity:0;transform:translateY(18px) scale(.95)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes welcomeOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.06)}}
+.welcomeLogo{width:76px;height:76px;border-radius:20px;margin:0 auto 22px;display:grid;place-items:center;font-weight:900;font-family:var(--font-head);font-size:19px;background:linear-gradient(135deg,#3d96ff,#36dfd0);color:#03111c;box-shadow:0 16px 45px rgba(60,150,255,.45);animation:welcomeLogoPop .8s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes welcomeLogoPop{0%{transform:scale(.4) rotate(-10deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.welcomeHi{font-size:12px;letter-spacing:3px;color:var(--cyan);font-weight:800;text-transform:uppercase;opacity:0;animation:ltFadeUp .5s ease .22s forwards}
+.welcomeName{font-family:var(--font-head);font-size:clamp(26px,5vw,38px);font-weight:800;margin:9px 0;background:linear-gradient(135deg,#eef5ff,#9fd0ee);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0;animation:ltFadeUp .5s ease .38s forwards}
+.welcomeRole{font-size:11px;color:var(--muted);opacity:0;animation:ltFadeUp .5s ease .54s forwards}
+.welcomeLast{font-size:9px;color:#7bf4e8;font-weight:700;margin-top:8px;opacity:0;animation:ltFadeUp .5s ease .64s forwards}
+@keyframes ltFadeUp{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+.welcomeDots{display:flex;gap:6px;justify-content:center;margin-top:24px;opacity:0;animation:ltFadeUp .5s ease .7s forwards}
+.welcomeDots span{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:dotPulse 1.1s ease-in-out infinite}
+.welcomeDots span:nth-child(2){animation-delay:.15s}
+.welcomeDots span:nth-child(3){animation-delay:.3s}
+@keyframes dotPulse{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1.15)}}
+
+/* ---- App reveal after login ---- */
+body.authed .app{animation:appReveal .6s cubic-bezier(.2,.8,.25,1) both}
+@keyframes appReveal{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:translateY(0)}}
+
+/* ---- Add/Edit form modal ---- */
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.formgrid label{display:block;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-weight:700}
+.formgrid .full{grid-column:1/-1}
+.rowbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.actioncol{display:flex;gap:6px}
+.iconbtn{padding:6px 9px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.045);color:#fff;cursor:pointer;font-size:11px}
+.iconbtn:hover{border-color:rgba(74,165,255,.4)}
+.iconbtn.danger:hover{border-color:rgba(255,143,179,.5);color:var(--rose)}
+.savepulse{display:none;align-items:center;gap:6px;font-size:9px;color:#7bf4e8;font-weight:800;letter-spacing:.5px}
+.savepulse.show{display:inline-flex}
+.savepulse .dot{width:6px;height:6px;border-radius:50%;background:#39dfd0;box-shadow:0 0 8px #39dfd0}
+
+/* ---- Roles ---- */
+.role-viewer .admin-only{opacity:.5;position:relative}
+.role-viewer .admin-only:hover{opacity:.75}
+.role-viewer button.admin-only:after,.role-viewer .nav.admin-only:after{content:"🔒";font-size:9px;margin-left:5px}
+.role-viewer .iconbtn.admin-only:after{content:"🔒";font-size:8px;position:absolute;top:-4px;right:-4px;margin:0}
+.authAlertOverlay{display:none;position:fixed;inset:0;z-index:400;align-items:center;justify-content:center;background:rgba(3,8,16,.62);backdrop-filter:blur(7px);padding:20px;cursor:pointer}
+.authAlertOverlay.show{display:flex}
+.authAlertBox{background:linear-gradient(145deg,#131f33,#0b1626);border:1px solid rgba(255,143,179,.4);border-radius:18px;padding:30px 34px;text-align:center;max-width:360px;box-shadow:0 30px 90px rgba(0,0,0,.55);animation:authPop .28s cubic-bezier(.2,.8,.25,1);cursor:default}
+.authAlertIco{font-size:32px;margin-bottom:12px}
+.authAlertMsg{font-family:var(--font-head);font-weight:800;font-size:14px;color:var(--rose);letter-spacing:.2px;line-height:1.5}
+.authAlertSub{font-size:10px;color:var(--muted);margin-top:8px}
+@keyframes authPop{from{transform:scale(.86);opacity:0}to{transform:scale(1);opacity:1}}
+.rolebadge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:99px;background:rgba(255,208,106,.1);border:1px solid rgba(255,208,106,.3);color:var(--gold);font-size:9px;font-weight:800;letter-spacing:.5px}
+
+/* ---- Activity Log ---- */
+.logtable{width:100%;border-collapse:collapse}.logtable th{padding:10px 12px;text-align:left;background:rgba(74,165,255,.08);color:#91a9c5;font-size:9px;text-transform:uppercase;letter-spacing:1px}.logtable td{padding:10px 12px;border-top:1px solid rgba(139,180,225,.08);font-size:10px;color:#dbe8f6}.logtable td.logts{color:var(--muted);white-space:nowrap;font-family:var(--font-mono);font-size:9px}.logtag{display:inline-block;padding:3px 8px;border-radius:99px;font-size:9px;font-weight:800}
+.logtag.add{background:rgba(57,223,208,.12);color:#7bf4e8}.logtag.edit{background:rgba(74,165,255,.12);color:var(--blue)}.logtag.delete{background:rgba(255,143,179,.12);color:var(--rose)}.logtag.import{background:rgba(255,208,106,.12);color:var(--gold)}.logtag.auth{background:rgba(139,180,225,.12);color:#8bb4e1}.logtag.backup{background:rgba(74,165,255,.12);color:var(--blue)}.logtag.restore{background:rgba(57,223,208,.12);color:#7bf4e8}.logtag.otp{background:rgba(255,208,106,.12);color:var(--gold)}.logtag.reset{background:rgba(255,143,179,.12);color:var(--rose)}
+
+/* ---- Trend chart ---- */
+.trendwrap{width:100%;overflow-x:auto}
+.trendwrap svg{display:block}
+.trendlabel{font-size:8px;fill:var(--muted);font-family:var(--font-body)}
+/* ---- Prepared-by corner credit ---- */
+.preparedByBadge{position:fixed;top:10px;right:14px;z-index:60;background:rgba(13,29,51,.85);border:1px solid var(--line);backdrop-filter:blur(10px);padding:6px 12px;border-radius:99px;font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.3px;box-shadow:0 8px 22px rgba(0,0,0,.25)}
+.preparedByBadge b{color:#7bf4e8;font-weight:800}
+@media(max-width:600px){.preparedByBadge{top:auto;bottom:78px;right:10px;font-size:9px;padding:5px 9px}}
+
+/* ---- WhatsApp floating contact button ---- */
+.waFab{position:fixed;right:20px;bottom:20px;z-index:220;width:56px;height:56px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 14px 34px rgba(37,211,102,.45);cursor:pointer;border:none;transition:transform .18s ease,box-shadow .18s ease}
+.waFab:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 18px 40px rgba(37,211,102,.55)}
+.waFab svg{width:28px;height:28px}
+.waFab .waPing{position:absolute;inset:0;border-radius:50%;background:#25D366;opacity:.55;animation:waPulse 2.2s ease-out infinite}
+@keyframes waPulse{0%{transform:scale(1);opacity:.55}100%{transform:scale(1.7);opacity:0}}
+.waTip{position:fixed;right:84px;bottom:34px;z-index:220;background:#0b1a2d;border:1px solid var(--line);color:#fff;font-size:10px;font-weight:700;padding:7px 11px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .18s ease;white-space:nowrap}
+.waFabWrap:hover .waTip{opacity:1}
+@media(max-width:600px){.waFab{right:14px;bottom:14px;width:50px;height:50px}.waFab svg{width:24px;height:24px}.waTip{display:none}}
+
+/* ---- Register / approval workflow ---- */
+.registerLinkRow{position:relative;z-index:1;text-align:center;margin-top:14px}
+.registerLinkRow button{background:transparent;border:0;color:#bfe2ff;font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline;font-family:inherit;padding:6px 10px}
+.registerLinkRow button:hover{color:#fff}
+.registerNote{color:#7fa8d6;font-size:9px;margin-top:2px}
+.navbadge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 5px;border-radius:99px;background:var(--rose);color:#2a0512;font-size:9px;font-weight:900;margin-left:6px;vertical-align:middle}
+.pendingCard{border:1px solid var(--line);border-radius:14px;padding:16px;background:linear-gradient(145deg,rgba(5,19,37,.8),rgba(7,23,40,.68));display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pendingCard .pinfo b{display:block;font-size:13px}
+.pendingCard .pinfo span{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+.pendingCard .pactions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pendingCard select{width:auto;padding:8px 10px;font-size:10px}
+.emptyState{padding:26px;text-align:center;color:var(--muted);font-size:11px}
+#registerModal{z-index:260}
+</style>
+</head>
+<body>
+<div class="preparedByBadge">Prepared By <b>ABDUL KAREEM</b></div>
+<div class="waFabWrap" style="position:fixed;right:0;bottom:0;z-index:220">
+<span class="waTip">Chat on WhatsApp</span>
+<button class="waFab" id="waContactBtn" title="Contact on WhatsApp">
+<span class="waPing"></span>
+<svg viewBox="0 0 32 32" fill="#fff" style="position:relative"><path d="M16.01 3C9.38 3 4 8.38 4 15.01c0 2.39.7 4.61 1.9 6.47L4 29l7.73-1.87a11.9 11.9 0 0 0 4.28.79h.01c6.63 0 12.01-5.38 12.01-12.01C28.02 8.38 22.65 3 16.01 3zm0 21.8h-.01c-1.42 0-2.81-.38-4.02-1.1l-.29-.17-4.59 1.11 1.13-4.47-.19-.29a9.72 9.72 0 0 1-1.5-5.17c0-5.4 4.4-9.79 9.8-9.79 2.62 0 5.08 1.02 6.93 2.87a9.72 9.72 0 0 1 2.87 6.92c0 5.4-4.4 9.79-9.13 9.79zm5.36-7.33c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.23-.45-2.34-1.44-.87-.77-1.45-1.72-1.62-2.01-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.6-.91-2.19-.24-.58-.48-.5-.66-.51h-.56c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.44s1.05 2.83 1.19 3.03c.15.2 2.06 3.14 4.99 4.4.7.3 1.24.48 1.67.61.7.22 1.34.19 1.84.12.56-.08 1.74-.71 1.98-1.4.24-.68.24-1.27.17-1.4-.07-.12-.26-.2-.55-.34z"/></svg>
+</button>
+</div>
+<div id="loginScreen">
+<div class="loginScan"></div>
+<div class="loginOrb3"></div>
+<div class="loginParticles" id="loginParticles"></div>
+<div class="logonWindow">
+<div class="logonTitlebar"><span>🗔 LOGON</span><span class="logonX">✕</span></div>
+<div class="logonHeader">
+<div class="glob">LUCKY<br>TEX</div>
+<div>
+<div class="logonWordmark" id="logonWordmark">LUCKY TEX</div>
+<div class="logonTag">Manufacturers &amp; Exporters of All Types of Textiles</div>
+</div>
+</div>
+<div class="logonBody">
+<div class="logonSidebar"><span>Enterprise Resource Planning</span></div>
+<form id="loginForm" class="logonForm" autocomplete="off">
+<div class="logonManual">User Manual</div>
+<div id="pwFields">
+<div class="logonRow"><label>Employee Code :</label><input id="loginUser" placeholder="e.g. 6513" autocomplete="off"></div>
+<div class="logonRow"><label>Employee Name :</label><input id="empName" readonly tabindex="-1"></div>
+<div class="logonRow"><label>Designation :</label><input id="empDesig" readonly tabindex="-1"></div>
+<div class="logonRow"><label>Department :</label><input id="empDept" readonly tabindex="-1"></div>
+<div class="logonRow"><label>Section :</label><input id="empSection" readonly tabindex="-1"></div>
+<div class="logonRow"><label>Password :</label><div class="pwWrap"><input id="loginPass" type="password" placeholder="" autocomplete="off"><button type="button" class="pwEye" id="pwEye" title="Show/Hide password">👁</button></div></div>
+<div class="attemptMeter" id="attemptMeter" style="display:none"><span></span><span></span><span></span><span></span><span></span></div>
+<div class="lastLoginTag" id="lastLoginTag" style="display:none">🕓 Last sign-in: <b id="lastLoginVal">—</b></div>
+<div class="logonerr" id="loginErr">Incorrect employee code or password</div>
+<div class="rememberRow">
+<label><input type="checkbox" id="rememberMe"> Keep me signed in on this device</label>
+<span class="secureNote">🔒 256-bit session • Auto-lock enabled</span>
+</div>
+<div class="logonBtns">
+<button type="button" id="killSessionBtn">Kill Session</button>
+<button type="submit" class="connectBtn" id="connectBtn"><span class="btnSpin"></span><span class="btnLbl">Connect</span></button>
+<button type="button" id="exitBtn">Exit</button>
+</div>
+</div>
+<div id="otpStep">
+<div class="logonRow"><label>OTP Code :</label><input id="otpInput" maxlength="6" inputmode="numeric" autocomplete="off" placeholder="6-digit code"></div>
+<div class="otpMeta">🔐 Code sent via WhatsApp to <b id="otpTargetLabel">—</b>. Expires in <b id="otpCountdown">180</b>s.</div>
+<div class="logonerr" id="otpErr">Incorrect or expired code</div>
+<div class="logonBtns">
+<button type="button" id="otpBackBtn">← Back</button>
+<button type="button" id="otpResendBtn" class="otpResendBtn">Resend via WhatsApp</button>
+<button type="button" class="connectBtn" id="otpVerifyBtn"><span class="btnSpin" id="otpSpin"></span><span class="btnLbl">Verify &amp; Sign In</span></button>
+</div>
+</div>
+</form>
+</div>
+<div class="logonFooter">
+<b>Prepared By Abdul Kareem</b>
+<small>A Team Towards Complete &amp; Absolute Automization of Lucky Tex</small>
+</div>
+</div>
+<div class="registerLinkRow">
+<button type="button" id="openRegisterBtn">New employee? Register for access →</button>
+<div class="registerNote">Your request goes to the admin for approval before it works.</div>
+<button type="button" id="openResetBtn">Forgot password? Request a reset →</button>
+<div class="registerNote">Password resets are approved by the admin, just like new registrations.</div>
+</div>
+</div>
+<div id="welcomeScreen">
+<div class="welcomeBox" id="welcomeBox">
+<div class="welcomeLogo">LT</div>
+<div class="welcomeHi">Welcome back</div>
+<div class="welcomeName" id="welcomeName">—</div>
+<div class="welcomeRole" id="welcomeRole">—</div>
+<div class="welcomeLast" id="welcomeLast"></div>
+<div class="welcomeDots"><span></span><span></span><span></span></div>
+</div>
+</div>
+<div id="registerModal" class="modal">
+<div class="modalbox">
+<div class="modaltop"><div><div class="eyebrow">NEW ACCOUNT REQUEST</div><h2>Register For Access</h2></div><button class="btn" type="button" id="closeRegisterModal">Close ✕</button></div>
+<form id="registerForm">
+<div class="formgrid">
+<div><label>Desired Employee Code</label><input id="regCode" placeholder="e.g. 7421" required></div>
+<div><label>Full Name</label><input id="regName" placeholder="Your full name" required></div>
+<div><label>Designation</label><input id="regDesig" placeholder="e.g. Store Officer"></div>
+<div><label>Department</label><input id="regDept" placeholder="e.g. Grey & Finish Folding"></div>
+<div><label>Password</label><input id="regPass" type="password" placeholder="Choose a password" required></div>
+<div><label>Confirm Password</label><input id="regPass2" type="password" placeholder="Re-enter password" required></div>
+<div class="full"><label>Contact Number (optional)</label><input id="regPhone" placeholder="e.g. 03xx-xxxxxxx"></div>
+</div>
+<div class="logonerr" id="regErr" style="margin-left:0"></div>
+<div class="rowbtns">
+<button class="btn" type="button" id="cancelRegister">Cancel</button>
+<button class="btn primary" type="submit">Submit Request</button>
+</div>
+</form>
+</div>
+</div>
+<div id="resetModal" class="modal">
+<div class="modalbox">
+<div class="modaltop"><div><div class="eyebrow">ACCOUNT RECOVERY</div><h2>Request Password Reset</h2></div><button class="btn" type="button" id="closeResetModal">Close ✕</button></div>
+<form id="resetForm">
+<div class="formgrid">
+<div><label>Employee Code</label><input id="resetCode" placeholder="e.g. 6513" required></div>
+<div><label>Employee Name</label><input id="resetEmpName" readonly tabindex="-1" placeholder="Auto-filled from code"></div>
+<div><label>New Password</label><input id="resetPass" type="password" placeholder="Choose a new password" required></div>
+<div><label>Confirm New Password</label><input id="resetPass2" type="password" placeholder="Re-enter new password" required></div>
+<div class="full"><label>Note for Admin (optional)</label><input id="resetNote" placeholder="e.g. forgot after leave"></div>
+</div>
+<div class="logonerr" id="resetErr" style="margin-left:0"></div>
+<div class="rowbtns">
+<button class="btn" type="button" id="cancelReset">Cancel</button>
+<button class="btn primary" type="submit">Submit Request</button>
+</div>
+</form>
+</div>
+</div>
+<div id="idleModal">
+<div class="idleBox">
+<div class="idleIco">⏳</div>
+<h3>Session About To Expire</h3>
+<p>You've been inactive for a while. For security, Lucky Tex ERP will sign you out automatically.</p>
+<div class="idleCount" id="idleCount">60</div>
+<div class="idleBtns">
+<button class="btn" id="idleLogoutBtn">Logout Now</button>
+<button class="btn primary" id="idleStayBtn">Stay Signed In</button>
+</div>
+</div>
+</div>
+<div class="app">
+<aside class="sidebar">
+<div class="brand"><div class="logo">LT</div><div><b>LUCKY TEX</b><small>Executive Fabric Management</small><small id="sidebarRole" style="color:var(--gold);font-weight:800;display:block;margin-top:3px">—</small></div></div>
+<button class="nav active" data-page="dashboard">⌂ <span>Executive Dashboard</span></button>
+<button class="nav" data-page="inventory">▤ <span>Inventory Explorer</span></button>
+<button class="nav" data-page="analytics">◈ <span>Advanced Analytics</span></button>
+<button class="nav" data-page="reports">▥ <span>Management Reports</span></button>
+<button class="nav" data-page="activity">🕒 <span>Activity Log</span></button>
+<button class="nav" data-page="loginHistory">🔑 <span>Login History</span></button>
+<button class="nav admin-only" data-page="approvals">✅ <span>Approvals</span><span class="navbadge" id="pendingBadge" style="display:none">0</span></button>
+<div class="sidefoot">FFD FABRIC CONTROL<br>OFFLINE • VERIFIED</div>
+</aside>
+<main>
+<header class="topbar"><div><div class="eyebrow">LUCKY TEX • EXECUTIVE FABRIC INTELLIGENCE PLATFORM</div><h1 id="pageTitle">Executive Dashboard</h1><div class="sub" id="topRoleLabel" style="margin-top:2px"></div></div><div class="actions"><span class="rolebadge" id="roleBadge">●</span><span id="cloudStatus" style="display:none;font-size:9px;font-weight:800;letter-spacing:.3px"></span><span class="secBar" id="secBar" style="display:none"><span class="sdot"></span><span id="secBarText">Session secured</span></span><span class="savepulse" id="savePulse"><span class="dot"></span>Saved</span><span class="badge" style="margin:0">● LIVE • SINGLE-FILE SYSTEM</span><button class="btn primary admin-only" id="addBtn" title="Add a new stock record">➕ Add Record</button><button class="themebtn" id="themeBtn" title="Toggle light / dark mode">☾</button><button class="btn" id="pdfBtn" title="Download the current page as a PDF">📄 PDF</button><button class="btn" id="shareBtn" title="Share this report">🔗 Share</button><button class="btn" id="printBtn" title="Print the current report">Print Report</button><button class="btn" id="logoutBtn" title="Log out">⎋ Logout</button></div></header>
+
+<section id="dashboard" class="page active">
+<div class="hero"><div class="eyebrow">NON ERP FABRIC ON FFD FLOOR</div><h2>Dead Stock Command Center</h2><p>Professional visibility of fabric stock, meters, shades, qualities, widths, blends and inventory status — powered directly by your supplied data.</p><span class="badge">● 97 RECORDS EMBEDDED • SINGLE-FILE SYSTEM</span></div>
+<div class="cards">
+<div class="card"><small>TOTAL FABRIC METERS</small><b><span class="countup" id="totalMeters">0</span></b><span class="stat-trend up" id="trendMeters">● tracked live</span></div>
+<div class="card"><small>ACTIVE STOCK RECORDS</small><b><span class="countup" id="totalEntries">0</span></b><span>Records with meters</span></div>
+<div class="card"><small>AVERAGE METERS</small><b><span class="countup" id="avgMeters">0</span></b><span>Per record</span></div>
+<div class="card"><small>UNIQUE BLENDS</small><b><span class="countup" id="customers">0</span></b><span>Distinct blends</span></div>
+</div>
+<div class="insights" id="insightCards"></div>
+<div class="grid2"><div class="panel"><h3>Fabric by Type</h3><div class="donutwrap"><svg id="typeDonut" width="150" height="150" viewBox="0 0 150 150"></svg><div class="donutlegend" id="typeLegend"></div></div></div><div class="panel"><h3>Fabric by Shade</h3><div id="shadeBars" class="bars"></div></div></div>
+<div class="panel"><h3>Fabric by Type — Meters</h3><div id="typeBars" class="bars"></div></div>
+<div class="panel"><div class="panelhead"><h3>Stock Snapshot</h3><button class="btn" data-go="inventory">View All →</button></div><div class="tablewrap"><table><thead><tr><th>S.No</th><th>Type</th><th>Shade</th><th>Status</th><th>Blend</th><th>Quality</th><th>Width</th><th>Meters</th></tr></thead><tbody id="preview"></tbody></table></div></div>
+</section>
+
+<section id="inventory" class="page"><div class="eyebrow">FULL INVENTORY EXPLORER</div><h2>Fabric Stock Register</h2><div class="sub">Search and filter every record. Click any row for complete details.</div>
+<div class="filters"><input id="search" placeholder="🔎 Search blend, quality, shade, width, type..."><select id="typeFilter"><option value="">All Types</option></select><select id="shadeFilter"><option value="">All Shades</option></select><select id="statusFilter"><option value="">All Status</option></select><button class="btn" id="resetBtn" title="Clear all filters">Reset Filters</button></div>
+<div class="result"><span id="count">0 records</span><b id="meters">0 meters</b></div>
+<div class="admin-only" style="margin:-6px 0 14px;display:flex;gap:9px;flex-wrap:wrap"><button class="btn" id="importBtn" title="Bulk import records from a CSV file">📤 Import CSV</button><input type="file" id="importFile" accept=".csv" style="display:none"><button class="btn" id="backupBtn" title="Download a full backup of all data as a JSON file">💾 Backup Data</button><button class="btn" id="restoreBtn" title="Restore data from a previously downloaded JSON backup">📥 Restore Backup</button><input type="file" id="restoreFile" accept=".json" style="display:none"></div><div class="panel"><div class="tablewrap"><table><thead><tr>
+<th data-sort="SNo">S.No<span class="sort-ico">▲▼</span></th>
+<th data-sort="Type">Type<span class="sort-ico">▲▼</span></th>
+<th data-sort="Shade">Shade<span class="sort-ico">▲▼</span></th>
+<th data-sort="Status">Status<span class="sort-ico">▲▼</span></th>
+<th data-sort="Blend">Blend<span class="sort-ico">▲▼</span></th>
+<th data-sort="Quality">Quality<span class="sort-ico">▲▼</span></th>
+<th data-sort="Width">Width<span class="sort-ico">▲▼</span></th>
+<th data-sort="Meters">Meters<span class="sort-ico">▲▼</span></th>
+<th>Actions</th>
+</tr></thead><tbody id="inventoryTable"></tbody></table></div><div class="pager" id="pager"></div></div></section>
+
+<section id="analytics" class="page"><div class="eyebrow">ADVANCED BUSINESS INTELLIGENCE</div><h2>Inventory Analytics</h2><div class="sub">Live meter calculations grouped by your available data fields.</div>
+<div class="panel"><h3>Stock Added Over Time <span class="sub" style="font-weight:400">— based on Date Added for records entered through this dashboard</span></h3><div class="trendwrap"><svg id="trendChart" width="100%" height="200" viewBox="0 0 900 200" preserveAspectRatio="none"></svg></div></div>
+<div class="grid2"><div class="panel"><h3>Meters by Status</h3><div id="statusBars" class="bars"></div></div><div class="panel"><h3>Meters by Width</h3><div id="widthBars" class="bars"></div></div></div>
+<div class="grid2"><div class="panel"><h3>Top Blends by Meters</h3><div id="customerBars" class="bars"></div></div><div class="panel"><h3>Quality Distribution</h3><div id="qualityBars" class="bars"></div></div></div></section>
+
+<section id="reports" class="page"><div class="eyebrow">MANAGEMENT REPORTING</div><h2>Executive Management Report</h2><div class="sub">Management-ready summary generated from the embedded stock data.</div>
+<div class="reportgrid" id="reportCards"></div><div class="panel"><div class="panelhead"><h3>Data Verification</h3><button class="btn primary" id="csvBtn">Download CSV</button></div><div class="verify" id="verification"></div></div></section>
+
+<section id="activity" class="page"><div class="eyebrow">AUDIT TRAIL</div><h2>Activity Log</h2><div class="sub">Every login, add, edit, delete and import performed on this device, newest first.</div>
+<div class="panel"><div class="panelhead"><h3>Recent Activity</h3><button class="btn admin-only" id="clearLogBtn" title="Clear the activity log">Clear Log</button></div><div class="tablewrap"><table class="logtable"><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Detail</th></tr></thead><tbody id="activityTable"></tbody></table></div></div></section>
+
+<section id="loginHistory" class="page"><div class="eyebrow">ACCESS AUDIT</div><h2>Login History</h2><div class="sub">Every password check, OTP send/verify, failed attempt and lockout on this device, newest first.</div>
+<div class="panel"><div class="tablewrap"><table class="logtable"><thead><tr><th>Time</th><th>Employee</th><th>Event</th><th>Detail</th></tr></thead><tbody id="loginHistoryTable"></tbody></table></div></div></section>
+
+<section id="approvals" class="page admin-only"><div class="eyebrow">ACCESS CONTROL</div><h2>Pending Account Approvals</h2><div class="sub">New employee registrations and password reset requests wait here until an admin approves or rejects them.</div>
+<h3 style="margin:6px 0 10px">New Registrations</h3>
+<div id="pendingList"></div>
+<h3 style="margin:22px 0 10px">Password Reset Requests</h3>
+<div id="pendingResetList"></div>
+</section>
+</main></div>
+
+<div id="modal" class="modal"><div class="modalbox"><div class="modaltop"><div><div class="eyebrow">RECORD DETAILS</div><h2 id="modalTitle">Fabric Record</h2></div><div class="actioncol"><button class="btn admin-only" id="editFromModal">✎ Edit</button><button class="btn admin-only" id="deleteFromModal">🗑 Delete</button><button class="btn" id="closeModal">Close ✕</button></div></div><div id="detailgrid" class="detailgrid"></div></div></div>
+
+<div id="formModal" class="modal"><div class="modalbox"><div class="modaltop"><div><div class="eyebrow" id="formEyebrow">ADD RECORD</div><h2 id="formTitle">New Fabric Record</h2></div><button class="btn" id="closeFormModal">Close ✕</button></div>
+<form id="recordForm">
+<div class="formgrid">
+<div><label>Type</label><input id="f_Type" required></div>
+<div><label>Shade</label><input id="f_Shade" required></div>
+<div><label>Status</label><input id="f_Status" required></div>
+<div><label>Blend</label><input id="f_Blend" required></div>
+<div class="full"><label>Quality</label><input id="f_Quality" required></div>
+<div><label>Width</label><input id="f_Width" type="number" step="any" required></div>
+<div><label>Meters</label><input id="f_Meters" type="number" step="any" required></div>
+<div><label>Date Added</label><input id="f_Date" type="date"></div>
+</div>
+<div class="rowbtns"><button type="button" class="btn" id="cancelForm">Cancel</button><button type="submit" class="btn primary" id="saveFormBtn">Save Record</button></div>
+</form>
+</div></div>
+
+<div id="toast" class="toast"></div>
+<div id="authAlert" class="authAlertOverlay"><div class="authAlertBox"><div class="authAlertIco">🔒</div><div class="authAlertMsg" id="authAlertMsg"></div></div></div>
+
+<script>
+const STOCK_DATA=[{"SNo": 1, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 102, "Meters": 179}, {"SNo": 2, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 102, "Meters": 161}, {"SNo": 3, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 102, "Meters": 139}, {"SNo": 4, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 102, "Meters": 190}, {"SNo": 5, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 102, "Meters": 202}, {"SNo": 6, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 100, "Meters": 145}, {"SNo": 7, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 100, "Meters": 124}, {"SNo": 8, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "20 x 20 / 60 x 60", "Width": 97, "Meters": 38}, {"SNo": 9, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "20 x 20 / 60 x 60", "Width": 43, "Meters": 180}, {"SNo": 10, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "20 x 20 / 60 x 60", "Width": 43, "Meters": 97}, {"SNo": 11, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "20 x 20 / 60 x 60", "Width": 43, "Meters": 174}, {"SNo": 12, "Type": "Dead Batcher", "Shade": "Fresh", "Status": "White", "Blend": "STN", "Quality": "60 x 60 / 185 x 100", "Width": 112, "Meters": 86}, {"SNo": 13, "Type": "Bleach Fabric", "Shade": "B-Grade", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 74, "Meters": 35}, {"SNo": 14, "Type": "Bleach Fabric", "Shade": "B-Grade", "Status": "White", "Blend": "CTN", "Quality": "20 x 20 / 60 x 60", "Width": 45, "Meters": 69}, {"SNo": 15, "Type": "Bleach Fabric", "Shade": "B-Grade", "Status": "White", "Blend": "CTN", "Quality": "20 x 20 / 60 x 60", "Width": 50, "Meters": 103}, {"SNo": 16, "Type": "Bleach Fabric", "Shade": "B-Grade", "Status": "White", "Blend": "CTN", "Quality": "20 x 10 / 54 x 34", "Width": 45, "Meters": 38}, {"SNo": 17, "Type": "Bleach Fabric", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 63, "Meters": 160}, {"SNo": 18, "Type": "Bleach Fabric", "Shade": "B-Grade", "Status": "White", "Blend": "CTN", "Quality": "20 x 20 / 60 x 60", "Width": 43, "Meters": 153}, {"SNo": 19, "Type": "Bleach Fabric", "Shade": "B-Grade", "Status": "White", "Blend": "CTN", "Quality": "20 x 20 / 60 x 60", "Width": 50, "Meters": 150}, {"SNo": 20, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "PC", "Quality": "30 x 30 / 76 x 52", "Width": 83, "Meters": 167}, {"SNo": 21, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "CTN", "Quality": "30 x 30 / 76 x 52", "Width": 102, "Meters": 170}, {"SNo": 22, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "CTN", "Quality": "30 x 30 / 76 x 60", "Width": 76, "Meters": 108}, {"SNo": 23, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "CTN", "Quality": "30 x 30 / 76 x 54", "Width": 118, "Meters": 110}, {"SNo": 24, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "PC", "Quality": "30 x 30 / 76 x 52", "Width": 86, "Meters": 112}, {"SNo": 25, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "PC", "Quality": "30 x 30 / 76 x 68", "Width": 114, "Meters": 62}, {"SNo": 26, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "PC", "Quality": "30 x 30 / 76 x 52", "Width": 114, "Meters": 55}, {"SNo": 27, "Type": "Local Grey Fabric", "Shade": "B-Grade", "Status": "Grey  Fabric", "Blend": "STN", "Quality": "80 x 80 / 216 x 160", "Width": 114, "Meters": 75}, {"SNo": 28, "Type": "Local Grey Fabric", "Shade": "B-Grade", "Status": "Grey  Fabric", "Blend": "STN", "Quality": "80 x 80 / 216 x 160", "Width": 114, "Meters": 32}, {"SNo": 29, "Type": "Local Grey Fabric", "Shade": "B-Grade", "Status": "Grey  Fabric", "Blend": "STN", "Quality": "40 x 40 / 142 x 87 ", "Width": 119, "Meters": 124}, {"SNo": 30, "Type": "Local Grey Fabric", "Shade": "B-Grade", "Status": "Grey  Fabric", "Blend": "STN", "Quality": "40 x 40 / 170 x 120", "Width": 120, "Meters": 126}, {"SNo": 31, "Type": "Local Grey Fabric", "Shade": "B-Grade", "Status": "Grey  Fabric", "Blend": "PC", "Quality": "30 x 30 / 60 x 56", "Width": 112, "Meters": 61}, {"SNo": 32, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "PC", "Quality": "30 x 30 / 76 x 66", "Width": 102, "Meters": 216}, {"SNo": 33, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "PC", "Quality": "30 x 30 / 76 x 66", "Width": 102, "Meters": 64}, {"SNo": 34, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "PC", "Quality": "30 x 30 / 76 x 66", "Width": 102, "Meters": 72}, {"SNo": 35, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "PC", "Quality": "30 x 30 / 76 x 64", "Width": 120, "Meters": 119}, {"SNo": 36, "Type": "Print Fabric", "Shade": "Fresh", "Status": "Dyed", "Blend": "CTN", "Quality": "30 x 30 / 76 x 62", "Width": 85, "Meters": 63}, {"SNo": 37, "Type": "Print Fabric", "Shade": "Fresh", "Status": "Dyed", "Blend": "CTN", "Quality": "30 x 30 / 76 x 62", "Width": 85, "Meters": 32}, {"SNo": 38, "Type": "Export Fabric Grey", "Shade": "B-Grade", "Status": "Grey  Fabric", "Blend": "CTN", "Quality": "21 x 10 / 100 x 52", "Width": 59, "Meters": 65}, {"SNo": 39, "Type": "Export Fabric Grey", "Shade": "B-Grade", "Status": "Grey  Fabric", "Blend": "DNR", "Quality": "22 x 150 / 114 x 48", "Width": 112, "Meters": 39}, {"SNo": 40, "Type": "Export Fabric Grey", "Shade": "B-Grade", "Status": "Grey  Fabric", "Blend": "DNR", "Quality": "22 x 150 / 114 x 48", "Width": 112, "Meters": 86}, {"SNo": 41, "Type": "Export Fabric Grey", "Shade": "B-Grade", "Status": "Grey  Fabric", "Blend": "PC", "Quality": "22 x 16 / 114 x 48", "Width": 58, "Meters": 20}, {"SNo": 42, "Type": "Export Fabric Grey", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "DNR", "Quality": "22 x 150 / 114 x 48", "Width": 112, "Meters": 116}, {"SNo": 43, "Type": "Export Fabric Grey", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "DNR", "Quality": "22 x 150 / 114 x 48", "Width": 112, "Meters": 52}, {"SNo": 44, "Type": "Export Fabric Grey", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "FLN", "Quality": "16 x 6 / 76 x 34", "Width": 124, "Meters": 322}, {"SNo": 45, "Type": "Export Fabric Grey", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "FLN", "Quality": "40 x 40 / 110 x 86", "Width": 120, "Meters": 87}, {"SNo": 46, "Type": "Raiz Fabric", "Shade": "B-Grade", "Status": "Natural", "Blend": "FLN", "Quality": "16 x 6 / 46 x 40", "Width": 62, "Meters": 118}, {"SNo": 47, "Type": "Raiz Fabric", "Shade": "B-Grade", "Status": "Natural", "Blend": "FLN", "Quality": "16 x 6 / 46 x 40", "Width": 62, "Meters": 110}, {"SNo": 48, "Type": "Raiz Fabric", "Shade": "Fresh", "Status": "Natural", "Blend": "FLN", "Quality": "20 x 10 / 40 x 40", "Width": 106, "Meters": 127}, {"SNo": 49, "Type": "Raiz Fabric", "Shade": "Fresh", "Status": "Natural", "Blend": "FLN", "Quality": "20 x 10 / 40 x 40", "Width": 106, "Meters": 105}, {"SNo": 50, "Type": "Raiz Fabric", "Shade": "Fresh", "Status": "Natural", "Blend": "FLN", "Quality": "20 x 10 / 40 x 40", "Width": 106, "Meters": 98}, {"SNo": 51, "Type": "Raiz Fabric", "Shade": "Fresh", "Status": "Natural", "Blend": "FLN", "Quality": "20 x 10 / 40 x 40", "Width": 106, "Meters": 94}, {"SNo": 52, "Type": "Un-Raiz Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "FLN", "Quality": "20 x 10 / 40 x 40", "Width": 106, "Meters": 176}, {"SNo": 53, "Type": "Un-Raiz Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "FLN", "Quality": "20 x 10 / 40 x 40", "Width": 106, "Meters": 85}, {"SNo": 54, "Type": "Un-Raiz Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "FLN", "Quality": "20 x 10 / 40 x 40", "Width": 106, "Meters": 94}, {"SNo": 55, "Type": "Un-Raiz Fabric", "Shade": "Fresh", "Status": "Grey  Fabric", "Blend": "FLN", "Quality": "20 x 10 / 40 x 40", "Width": 106, "Meters": 112}, {"SNo": 56, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "CTN", "Quality": "40 x 40 / 130 x 70", "Width": 114, "Meters": 218}, {"SNo": 57, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "CTN", "Quality": "40 x 40 / 130 x 64", "Width": 124, "Meters": 155}, {"SNo": 58, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "DNR", "Quality": "100 x 20 / 76 x 50", "Width": 118, "Meters": 71}, {"SNo": 59, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "CTN", "Quality": "40 x 40 /110 x 58", "Width": 106, "Meters": 81}, {"SNo": 60, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "DNR", "Quality": "100 x 18 / 76 x 48", "Width": 122, "Meters": 76}, {"SNo": 61, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "CTN", "Quality": "30 x 30 / 76 x 54", "Width": 111, "Meters": 182}, {"SNo": 62, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "CTN", "Quality": "40 x 40 /145 x 65", "Width": 110, "Meters": 207}, {"SNo": 63, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 87, "Meters": 164}, {"SNo": 64, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "CTN", "Quality": "40 x 40 / 130 x 60", "Width": 112, "Meters": 170}, {"SNo": 65, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "CTN", "Quality": "40 x 40 /130 x 96", "Width": 102, "Meters": 90}, {"SNo": 66, "Type": "Local Grey Fabric", "Shade": "Fresh", "Status": "Grey / Fabric", "Blend": "CTN", "Quality": "20 x 8 / 40 x 40", "Width": 126, "Meters": 155}, {"SNo": 67, "Type": "Bleach Fabric", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 87, "Meters": 57}, {"SNo": 68, "Type": "Bleach Fabric", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 / 76 x 66", "Width": 87, "Meters": 62}, {"SNo": 69, "Type": "Grey Fabric", "Shade": "B-Grade", "Status": "White", "Blend": "CTN", "Quality": "30 x 30 /76 x 66", "Width": 63, "Meters": 73}, {"SNo": 70, "Type": "Bleach Fabric", "Shade": "Fresh", "Status": "White", "Blend": "CTN", "Quality": "40 x 40 /165 x 70", "Width": 107, "Meters": 209}, {"SNo": null, "Type": null, "Shade": null, "Status": null, "Blend": "Total Mtrs", "Quality": 8067, "Width": null, "Meters": null}];
+(()=>{
+const STORAGE_KEY="luckyTexStockData_v1";
+const LOG_KEY="luckyTexActivityLog_v1";
+
+/* ---- Cloud Sync (Firebase Realtime Database) ----
+   Ye optional hai. Jab tak neeche firebaseConfig mein apni real values nahi daali jatin,
+   app pehle jaisa (sirf isi browser mein / localStorage) hi kaam karega.
+   Apni free values lene ke liye: https://console.firebase.google.com -> naya project banayein
+   -> Build > Realtime Database > Create Database -> "Start in test mode"
+   -> phir gear icon > Project settings > "Your apps" > Web app (</>) add karein
+   -> jo config object milega wahi neeche paste kar dein. */
+const firebaseConfig={
+apiKey:"AIzaSyCCv4-FCdlgw3GLw6TC1eoisESv6kEkw-Y",
+authDomain:"deadstock-f99e9.firebaseapp.com",
+databaseURL:"https://deadstock-f99e9-default-rtdb.firebaseio.com",
+projectId:"deadstock-f99e9",
+storageBucket:"deadstock-f99e9.firebasestorage.app",
+messagingSenderId:"470246997108",
+appId:"1:470246997108:web:a6d481d97495397933e521"
+};
+const CLOUD_PATH="luckyTexStock";
+let cloudEnabled=false,cloudDb=null,applyingRemote=false;
+function initCloud(){
+try{
+if(!firebaseConfig.apiKey||firebaseConfig.apiKey==="YOUR_API_KEY"||typeof firebase==="undefined")return;
+firebase.initializeApp(firebaseConfig);
+cloudDb=firebase.database();
+cloudEnabled=true;
+cloudDb.ref(CLOUD_PATH+"/data").on("value",snap=>{
+let remote=snap.val();
+if(!Array.isArray(remote)){
+if(remote===null&&Array.isArray(data)&&data.length){cloudDb.ref(CLOUD_PATH+"/data").set(data);cloudDb.ref(CLOUD_PATH+"/activityLog").set(activityLog.slice(0,200))}
+return;
+}
+applyingRemote=true;
+data=remote.map(r=>({...r,"Date Added":r["Date Added"]||""}));
+try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}
+refreshAll();
+applyingRemote=false;
+setCloudStatus(true);
+});
+cloudDb.ref(CLOUD_PATH+"/activityLog").on("value",snap=>{
+let remote=snap.val();
+if(!Array.isArray(remote))return;
+activityLog=remote;renderLog();
+});
+cloudDb.ref(".info/connected").on("value",snap=>setCloudStatus(!!snap.val()));
+}catch(err){console.warn("Cloud sync unavailable:",err);cloudEnabled=false}
+}
+function pushToCloud(){
+if(!cloudEnabled||applyingRemote)return;
+try{
+cloudDb.ref(CLOUD_PATH+"/data").set(data);
+cloudDb.ref(CLOUD_PATH+"/activityLog").set(activityLog.slice(0,200));
+}catch(err){console.warn("Cloud push failed:",err)}
+}
+function setCloudStatus(online){
+let el=$("cloudStatus");if(!el)return;
+el.style.display="inline-flex";
+el.textContent=online?"☁️ Synced across devices":"⚠️ Offline (local only)";
+el.style.color=online?"#7bf4e8":"var(--rose)";
+}
+
+const DEFAULT_DATA=STOCK_DATA.filter(r=>Number.isFinite(parseFloat(String(r["Meters"]??"").replace(/,/g,""))) && parseFloat(String(r["Meters"]??"").replace(/,/g,""))>0);
+function loadData(){try{let raw=localStorage.getItem(STORAGE_KEY);if(raw){let parsed=JSON.parse(raw);if(Array.isArray(parsed)&&parsed.length)return parsed.map(r=>({...r,"Date Added":r["Date Added"]||""}))}}catch(e){}return DEFAULT_DATA.map(r=>({...r,"Date Added":""}))}
+let data=loadData();
+const $=id=>document.getElementById(id),safe=v=>(v===null||v===undefined||String(v).trim()==="")?"N/A":String(v),meters=r=>{let n=parseFloat(String(r["Meters"]??"").replace(/,/g,""));return Number.isFinite(n)?n:0},fmt=n=>new Intl.NumberFormat("en-US").format(Math.round(n)),unique=k=>[...new Set(data.map(r=>r[k]).filter(v=>v!==null&&v!==undefined&&String(v).trim()!==""))].sort((a,b)=>String(a).localeCompare(String(b))),sumBy=(a,k)=>a.reduce((o,r)=>{let x=safe(r[k]);o[x]=(o[x]||0)+meters(r);return o},{});
+function saveData(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}pushToCloud();let p=$("savePulse");if(p){p.classList.add("show");clearTimeout(saveData._t);saveData._t=setTimeout(()=>p.classList.remove("show"),1600)}}
+function nextSNo(){return data.reduce((m,r)=>Math.max(m,Number(r["SNo"])||0),0)+1}
+function rows(a,id,lim){let x=lim?a.slice(0,lim):a;let showActions=id==="inventoryTable";$(id).innerHTML=x.length?x.map(r=>`<tr data-i="${data.indexOf(r)}"><td>${safe(r["SNo"])}</td><td>${safe(r.Type)}</td><td>${safe(r.Shade)}</td><td>${safe(r.Status)}</td><td>${safe(r.Blend)}</td><td>${safe(r.Quality)}</td><td>${safe(r.Width)}</td><td><b>${fmt(meters(r))}</b></td>${showActions?`<td><div class="actioncol"><button class="iconbtn admin-only" data-edit="${data.indexOf(r)}">✎</button><button class="iconbtn danger admin-only" data-del="${data.indexOf(r)}">🗑</button></div></td>`:""}</tr>`).join(""):`<tr><td colspan="${showActions?9:8}">No records found</td></tr>`;$(id).querySelectorAll("tr[data-i]").forEach(t=>t.onclick=e=>{if(e.target.closest("button"))return;open(data[+t.dataset.i])});$(id).querySelectorAll("[data-edit]").forEach(b=>b.onclick=e=>{e.stopPropagation();editRecord(data[+b.dataset.edit])});$(id).querySelectorAll("[data-del]").forEach(b=>b.onclick=e=>{e.stopPropagation();deleteRecord(data[+b.dataset.del])})}
+function bars(id,o,lim=12){let a=Object.entries(o).sort((x,y)=>y[1]-x[1]).slice(0,lim),mx=Math.max(...a.map(x=>x[1]),1);$(id).innerHTML=a.map(([k,v])=>`<div class="bar"><span>${k}</span><div class="track"><div class="fill" style="width:${v/mx*100}%"></div></div><span class="barval">${fmt(v)}</span></div>`).join("")||"<span class=sub>No data</span>"}
+function go(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$(p).classList.add("active");document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("active",x.dataset.page===p));$("pageTitle").textContent={dashboard:"Executive Dashboard",inventory:"Inventory Explorer",analytics:"Advanced Analytics",reports:"Management Reports",activity:"Activity Log",loginHistory:"Login History",approvals:"Pending Approvals"}[p];if(p==="approvals")renderApprovals();if(p==="loginHistory")renderLoginHistory();scrollTo(0,0)}
+
+/* ---- Sorting ---- */
+let sortKey=null,sortDir=1;
+function sortRows(a){if(!sortKey)return a;return [...a].sort((x,y)=>{let vx=sortKey==="Meters"?meters(x):(sortKey==="Width"?parseFloat(x.Width)||0:(sortKey==="SNo"?(x["SNo"]??0):String(x[sortKey]??"")));let vy=sortKey==="Meters"?meters(y):(sortKey==="Width"?parseFloat(y.Width)||0:(sortKey==="SNo"?(y["SNo"]??0):String(y[sortKey]??"")));if(typeof vx==="number"&&typeof vy==="number")return (vx-vy)*sortDir;return String(vx).localeCompare(String(vy))*sortDir})}
+document.querySelectorAll("th[data-sort]").forEach(th=>th.onclick=()=>{let k=th.dataset.sort;sortDir=(sortKey===k)?-sortDir:1;sortKey=k;document.querySelectorAll("th[data-sort]").forEach(x=>x.classList.remove("sort-active"));th.classList.add("sort-active");th.querySelector(".sort-ico").textContent=sortDir===1?"▲":"▼";page=1;filter()});
+
+/* ---- Pagination ---- */
+let page=1;const PAGE_SIZE=15;
+function paginate(a){let pages=Math.max(1,Math.ceil(a.length/PAGE_SIZE));if(page>pages)page=pages;let start=(page-1)*PAGE_SIZE;let slice=a.slice(start,start+PAGE_SIZE);renderPager(pages,a.length);return slice}
+function renderPager(pages,total){if(!total){$("pager").innerHTML="";return}let nums="";let from=Math.max(1,page-2),to=Math.min(pages,from+4);from=Math.max(1,to-4);for(let i=from;i<=to;i++)nums+=`<button class="pnum${i===page?" active":""}" data-p="${i}">${i}</button>`;$("pager").innerHTML=`<span>Page ${page} of ${pages} • ${fmt(total)} records</span><div class="pbtns"><button id="prevP" ${page<=1?"disabled":""}>‹ Prev</button>${nums}<button id="nextP" ${page>=pages?"disabled":""}>Next ›</button></div>`;$("prevP")&&($("prevP").onclick=()=>{page--;filter()});$("nextP")&&($("nextP").onclick=()=>{page++;filter()});$("pager").querySelectorAll(".pnum").forEach(b=>b.onclick=()=>{page=+b.dataset.p;filter()})}
+
+function filter(){let q=$("search").value.toLowerCase(),t=$("typeFilter").value,s=$("shadeFilter").value,st=$("statusFilter").value,a=data.filter(r=>(!q||Object.values(r).join(" ").toLowerCase().includes(q))&&(!t||String(r.Type)===t)&&(!s||String(r.Shade)===s)&&(!st||String(r.Status)===st));a=sortRows(a);rows(paginate(a),"inventoryTable");$("count").textContent=a.length+" records";$("meters").textContent=fmt(a.reduce((n,r)=>n+meters(r),0))+" meters";return a}
+
+/* ---- Animated counters ---- */
+function countUp(id,end,decimals=0){let el=$(id),start=0,dur=900,t0=performance.now();function step(t){let p=Math.min(1,(t-t0)/dur),v=start+(end-start)*(1-Math.pow(1-p,3));el.textContent=fmt(v);if(p<1)requestAnimationFrame(step)}requestAnimationFrame(step)}
+
+/* ---- Donut chart (SVG, dependency-free) ---- */
+const DONUT_COLORS=["#4aa5ff","#39dfd0","#ffd06a","#ff8fb3","#8b7bff","#5be0a0","#ff9d6a","#6fc3ff"];
+function donut(svgId,legendId,o){let ent=Object.entries(o).sort((a,b)=>b[1]-a[1]),total=ent.reduce((n,[,v])=>n+v,0)||1,r=60,cx=75,cy=75,circ=2*Math.PI*r,off=0,svg=$(svgId);let parts=ent.map(([k,v],i)=>{let frac=v/total,len=frac*circ,dash=`${len} ${circ-len}`,rot=off/circ*360;off+=len;return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${DONUT_COLORS[i%DONUT_COLORS.length]}" stroke-width="20" stroke-dasharray="${dash}" transform="rotate(${rot-90} ${cx} ${cy})"/>`}).join("");svg.innerHTML=`${parts}<circle cx="${cx}" cy="${cy}" r="${r-20}" fill="#0b1a2d"/><text x="${cx}" y="${cy-2}" text-anchor="middle" font-size="18" font-weight="800" fill="#eef5ff" font-family="Sora">${fmt(total)}</text><text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="8" fill="#93a8c2">METERS</text>`;$(legendId).innerHTML=ent.slice(0,8).map(([k,v],i)=>`<div><span class="sw" style="background:${DONUT_COLORS[i%DONUT_COLORS.length]}"></span>${k} — ${(v/total*100).toFixed(1)}%</div>`).join("")}
+
+/* ---- Trend line chart (SVG, dependency-free) ---- */
+function trendChart(svgId){let svg=$(svgId);let dated=data.filter(r=>r["Date Added"]);if(!dated.length){svg.innerHTML=`<text x="450" y="100" text-anchor="middle" font-size="11" fill="#93a8c2">No dated records yet — new records you add will appear here.</text>`;return}
+let byDate=dated.reduce((o,r)=>{o[r["Date Added"]]=(o[r["Date Added"]]||0)+meters(r);return o},{});
+let dates=Object.keys(byDate).sort(),vals=dates.map(d=>byDate[d]),mx=Math.max(...vals,1),W=900,H=200,padL=40,padR=20,padT=15,padB=30,plotW=W-padL-padR,plotH=H-padT-padB;
+let stepX=dates.length>1?plotW/(dates.length-1):0;
+let pts=dates.map((d,i)=>{let x=padL+(dates.length>1?i*stepX:plotW/2),y=padT+plotH-(vals[i]/mx*plotH);return [x,y]});
+let line=pts.map(p=>p.join(",")).join(" ");
+let area=`${padL},${padT+plotH} ${line} ${padL+plotW},${padT+plotH}`;
+let dots=pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="#39dfd0"/><title>${dates[i]}: ${fmt(vals[i])} m</title>`).join("");
+let labels=dates.map((d,i)=>i%Math.ceil(dates.length/10||1)===0?`<text x="${pts[i][0]}" y="${H-8}" text-anchor="middle" class="trendlabel">${d.slice(5)}</text>`:"").join("");
+svg.innerHTML=`<polyline points="${area}" fill="rgba(57,223,208,.12)" stroke="none"/><polyline points="${line}" fill="none" stroke="#39dfd0" stroke-width="2.5"/>${dots}${labels}<text x="${padL}" y="${padT+4}" class="trendlabel" fill="#93a8c2">${fmt(mx)}m</text>`}
+
+/* ---- Insights ---- */
+function insights(){let byType=sumBy(data,"Type"),byBlend=sumBy(data,"Blend"),topType=Object.entries(byType).sort((a,b)=>b[1]-a[1])[0],topBlend=Object.entries(byBlend).sort((a,b)=>b[1]-a[1])[0],lowStock=data.filter(r=>meters(r)>0&&meters(r)<50).length,cards=[
+{ico:"🏆",t:"Leading Category",d:`${topType?topType[0]:"N/A"} leads with ${fmt(topType?topType[1]:0)} meters in stock — the largest single category on the floor.`},
+{ico:"🧵",t:"Top Blend",d:`${topBlend?topBlend[0]:"N/A"} is the most-stocked blend at ${fmt(topBlend?topBlend[1]:0)} meters across all records.`},
+{ico:"⚠️",t:"Low Stock Watch",d:`${lowStock} record${lowStock===1?"":"s"} currently hold under 50 meters — worth a review for reorder or consolidation.`}
+];$("insightCards").innerHTML=cards.map(c=>`<div class="insight"><div class="ico">${c.ico}</div><div><b>${c.t}</b><span>${c.d}</span></div></div>`).join("")}
+
+/* ---- Theme toggle (session only, no browser storage) ---- */
+function toggleTheme(){let isLight=document.documentElement.getAttribute("data-theme")==="light";document.documentElement.setAttribute("data-theme",isLight?"dark":"light");$("themeBtn").textContent=isLight?"☾":"☀";}
+function open(r){$("modalTitle").textContent="Record #"+safe(r["SNo"]);$("detailgrid").innerHTML=Object.entries(r).map(([k,v])=>`<div class="detail"><small>${k}</small><b>${safe(v)}</b></div>`).join("");$("modal").classList.add("open")}
+function csv(){let a=filter(),c=Object.keys(data[0]||{}),s=[c.join(","),...a.map(r=>c.map(k=>`"${String(r[k]??"").replace(/"/g,'""')}"`).join(","))].join("\n"),u=URL.createObjectURL(new Blob([s],{type:"text/csv"})),x=document.createElement("a");x.href=u;x.download="FFD_Executive_Stock_Report.csv";x.click();URL.revokeObjectURL(u);toast("CSV report downloaded")}
+function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2000)}
+function authAlert(msg){let ov=$("authAlert");$("authAlertMsg").textContent=msg;ov.classList.add("show");clearTimeout(authAlert._t);authAlert._t=setTimeout(()=>ov.classList.remove("show"),2600)}
+
+/* ---- PDF export ---- */
+async function downloadPDF(){
+if(typeof html2canvas==="undefined"||!window.jspdf){toast("PDF engine failed to load — check your internet connection");return}
+let btn=$("pdfBtn"),oldLbl=btn.textContent;btn.textContent="⏳ Building...";btn.disabled=true;
+try{
+let target=document.querySelector(".page.active");
+let canvas=await html2canvas(target,{backgroundColor:"#0b1a2d",scale:2,useCORS:true});
+let img=canvas.toDataURL("image/jpeg",0.92);
+let {jsPDF}=window.jspdf;
+let pdf=new jsPDF({orientation:"p",unit:"pt",format:"a4"});
+let pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight();
+let imgW=pageW,imgH=canvas.height*imgW/canvas.width,heightLeft=imgH,pos=0;
+pdf.addImage(img,"JPEG",0,pos,imgW,imgH);heightLeft-=pageH;
+while(heightLeft>0){pos=heightLeft-imgH;pdf.addPage();pdf.addImage(img,"JPEG",0,pos,imgW,imgH);heightLeft-=pageH}
+let fname="LuckyTex_"+($("pageTitle").textContent||"Report").replace(/\s+/g,"_")+".pdf";
+pdf.save(fname);
+logActivity("export",`Downloaded PDF of ${$("pageTitle").textContent}`);
+toast("PDF downloaded");
+}catch(err){console.warn("PDF export failed:",err);toast("PDF export failed — try Print instead")}
+finally{btn.textContent=oldLbl;btn.disabled=false}
+}
+
+/* ---- Share ---- */
+async function shareReport(){
+let total=data.reduce((n,r)=>n+meters(r),0);
+let title="Lucky Tex — "+($("pageTitle").textContent||"Executive Dashboard");
+let text=`${title}\nTotal Fabric Meters: ${fmt(total)}\nStock Records: ${data.length}`;
+if(navigator.share){
+try{await navigator.share({title,text});logActivity("export",`Shared ${$("pageTitle").textContent}`)}catch(err){/* user cancelled */}
+return;
+}
+try{await navigator.clipboard.writeText(text);toast("Summary copied to clipboard — paste it anywhere to share");logActivity("export",`Copied share summary of ${$("pageTitle").textContent}`)}
+catch(err){toast("Could not share — try the WhatsApp button instead")}
+}
+
+/* ---- Full re-render after any add/edit/delete ---- */
+function refreshAll(){
+let total=data.reduce((n,r)=>n+meters(r),0);
+$("totalMeters").textContent=fmt(total);$("totalEntries").textContent=data.length;$("avgMeters").textContent=fmt(total/(data.length||1));$("customers").textContent=unique("Blend").length;
+["typeFilter","shadeFilter","statusFilter"].forEach(id=>{let cur=$(id).value;$(id).innerHTML=`<option value="">All ${id==="typeFilter"?"Types":id==="shadeFilter"?"Shades":"Status"}</option>`;let k=id==="typeFilter"?"Type":id==="shadeFilter"?"Shade":"Status";unique(k).forEach(v=>{let o=document.createElement("option");o.value=v;o.textContent=v;$(id).appendChild(o)});$(id).value=cur});
+rows(data,"preview",8);filter();
+bars("typeBars",sumBy(data,"Type"));bars("shadeBars",sumBy(data,"Shade"));bars("statusBars",sumBy(data,"Status"));bars("widthBars",sumBy(data,"Width"));bars("customerBars",sumBy(data,"Blend"));bars("qualityBars",sumBy(data,"Quality"));
+donut("typeDonut","typeLegend",sumBy(data,"Type"));
+trendChart("trendChart");
+insights();
+let cards=[["Total Fabric Meters",total],["Stock Records",data.length],["Blends",unique("Blend").length],["Shades",unique("Shade").length],["Qualities",unique("Quality").length],["Widths",unique("Width").length]];$("reportCards").innerHTML=cards.map(x=>`<div class="report"><small>${x[0]}</small><b>${fmt(x[1])}</b></div>`).join("");
+$("verification").innerHTML=[["Dataset Rows",data.length],["Total Meters",fmt(total)],["Non-zero Meter Rows",data.filter(r=>meters(r)!==0).length],["Blends",unique("Blend").length],["Qualities",unique("Quality").length],["Widths",unique("Width").length]].map(x=>`<div><small>${x[0]}</small><b>${x[1]}</b></div>`).join("");
+}
+
+/* ---- Add / Edit / Delete ---- */
+let editingRef=null;
+function openForm(mode,record){
+if(!requireAdmin())return;
+editingRef=record||null;
+$("formEyebrow").textContent=mode==="edit"?"EDIT RECORD":"ADD RECORD";
+$("formTitle").textContent=mode==="edit"?"Edit Fabric Record #"+safe(record["SNo"]):"New Fabric Record";
+$("f_Type").value=record?safe(record.Type).replace("N/A",""):"";
+$("f_Shade").value=record?safe(record.Shade).replace("N/A",""):"";
+$("f_Status").value=record?safe(record.Status).replace("N/A",""):"";
+$("f_Blend").value=record?safe(record.Blend).replace("N/A",""):"";
+$("f_Quality").value=record?safe(record.Quality).replace("N/A",""):"";
+$("f_Width").value=record&&record.Width!=null?record.Width:"";
+$("f_Meters").value=record&&record.Meters!=null?record.Meters:"";
+$("f_Date").value=record&&record["Date Added"]?record["Date Added"]:new Date().toISOString().slice(0,10);
+$("formModal").classList.add("open");
+}
+function editRecord(record){$("modal").classList.remove("open");openForm("edit",record)}
+function deleteRecord(record){if(!requireAdmin())return;if(!confirm("Delete record #"+safe(record["SNo"])+"? This cannot be undone."))return;let i=data.indexOf(record);if(i>-1){data.splice(i,1);saveData();refreshAll();$("modal").classList.remove("open");logActivity("delete","Deleted record #"+safe(record["SNo"])+" ("+safe(record.Type)+", "+fmt(meters(record))+"m)");toast("Record deleted")}}
+function submitForm(e){
+e.preventDefault();
+let isEdit=!!editingRef;
+let rec={
+"SNo":editingRef?editingRef["SNo"]:nextSNo(),
+"Type":$("f_Type").value.trim(),
+"Shade":$("f_Shade").value.trim(),
+"Status":$("f_Status").value.trim(),
+"Blend":$("f_Blend").value.trim(),
+"Quality":$("f_Quality").value.trim(),
+"Width":parseFloat($("f_Width").value)||0,
+"Meters":parseFloat($("f_Meters").value)||0,
+"Date Added":$("f_Date").value||new Date().toISOString().slice(0,10)
+};
+if(editingRef){Object.assign(editingRef,rec)}else{data.push(rec)}
+saveData();refreshAll();$("formModal").classList.remove("open");
+logActivity(isEdit?"edit":"add",(isEdit?"Updated":"Added")+" record #"+rec["SNo"]+" ("+rec.Type+", "+fmt(rec.Meters)+"m)");
+toast(isEdit?"Record updated":"Record added");editingRef=null;
+}
+
+/* ---- Full Backup / Restore (JSON) — keeps data safe across new file versions/devices ---- */
+function backupData(){
+try{
+let payload={app:"LuckyTexDashboard",version:1,exportedAt:new Date().toISOString(),data:data,activityLog:activityLog};
+let s=JSON.stringify(payload,null,2);
+let u=URL.createObjectURL(new Blob([s],{type:"application/json"}));
+let x=document.createElement("a");
+x.href=u;x.download="LuckyTex_Backup_"+new Date().toISOString().slice(0,10)+".json";x.click();
+URL.revokeObjectURL(u);
+toast("Backup file downloaded");
+logActivity("backup","Downloaded full data backup ("+data.length+" records)");
+}catch(err){console.warn("Backup failed:",err);toast("Backup failed")}
+}
+function restoreData(text){
+try{
+let parsed=JSON.parse(text);
+let incoming=Array.isArray(parsed)?parsed:(Array.isArray(parsed.data)?parsed.data:null);
+if(!incoming){toast("Invalid backup file");return}
+if(!confirm("Restore "+incoming.length+" records from this backup? This will replace all data currently in the dashboard."))return;
+data=incoming.map(r=>({...r,"Date Added":r["Date Added"]||""}));
+if(parsed.activityLog&&Array.isArray(parsed.activityLog)){activityLog=parsed.activityLog.concat(activityLog).slice(0,200);saveLog()}
+saveData();refreshAll();renderLog();
+toast("Backup restored — "+data.length+" records loaded");
+logActivity("restore","Restored data from backup ("+data.length+" records)");
+}catch(err){console.warn("Restore failed:",err);toast("Could not read backup file — make sure it's a valid backup JSON")}
+}
+
+/* ---- Activity Log ---- */
+function loadLog(){try{let raw=localStorage.getItem(LOG_KEY);let parsed=raw?JSON.parse(raw):[];return Array.isArray(parsed)?parsed:[]}catch(e){return[]}}
+let activityLog=loadLog();
+function saveLog(){try{localStorage.setItem(LOG_KEY,JSON.stringify(activityLog.slice(0,200)))}catch(e){}if(cloudEnabled&&!applyingRemote){try{cloudDb.ref(CLOUD_PATH+"/activityLog").set(activityLog.slice(0,200))}catch(err){}}}
+function logActivity(action,detail){activityLog.unshift({ts:new Date().toISOString(),user:currentUser||"—",action,detail});activityLog=activityLog.slice(0,200);saveLog();renderLog();renderLoginHistory()}
+function renderLog(){let tb=$("activityTable");if(!tb)return;tb.innerHTML=activityLog.length?activityLog.map(e=>`<tr><td class="logts">${e.ts.replace("T"," ").slice(0,19)}</td><td>${safe(e.user)}</td><td><span class="logtag ${e.action}">${e.action.toUpperCase()}</span></td><td>${safe(e.detail)}</td></tr>`).join(""):`<tr><td colspan="4">No activity recorded yet</td></tr>`}
+function renderLoginHistory(){let tb=$("loginHistoryTable");if(!tb)return;let entries=activityLog.filter(e=>e.action==="auth"||e.action==="otp");tb.innerHTML=entries.length?entries.map(e=>`<tr><td class="logts">${e.ts.replace("T"," ").slice(0,19)}</td><td>${safe(e.user)}</td><td><span class="logtag ${e.action}">${e.action.toUpperCase()}</span></td><td>${safe(e.detail)}</td></tr>`).join(""):`<tr><td colspan="4">No login activity recorded yet</td></tr>`}
+
+/* ---- CSV Import ---- */
+function parseCSVLine(line){let out=[],cur="",inQ=false;for(let i=0;i<line.length;i++){let c=line[i];if(inQ){if(c==='"'){if(line[i+1]==='"'){cur+='"';i++}else inQ=false}else cur+=c}else{if(c==='"')inQ=true;else if(c===','){out.push(cur);cur=""}else cur+=c}}out.push(cur);return out}
+function parseCSV(text){let lines=text.split(/\r?\n/).filter(l=>l.trim()!=="");if(!lines.length)return[];let headers=parseCSVLine(lines[0]).map(h=>h.trim());return lines.slice(1).map(l=>{let vals=parseCSVLine(l);let o={};headers.forEach((h,i)=>o[h]=vals[i]!==undefined?vals[i].trim():"");return o})}
+function importCSV(text){
+let rowsIn=parseCSV(text),added=0,today=new Date().toISOString().slice(0,10);
+rowsIn.forEach(r=>{
+let type=r.Type||r.type||"",meters_=parseFloat(r.Meters||r.meters||"0")||0;
+if(!type&&!meters_)return;
+data.push({
+"SNo":nextSNo(),
+"Type":type,
+"Shade":r.Shade||r.shade||"",
+"Status":r.Status||r.status||"",
+"Blend":r.Blend||r.blend||"",
+"Quality":r.Quality||r.quality||"",
+"Width":parseFloat(r.Width||r.width||"0")||0,
+"Meters":meters_,
+"Date Added":r["Date Added"]||today
+});
+added++;
+});
+if(added){saveData();refreshAll();logActivity("import",`Imported ${added} record${added===1?"":"s"} via CSV`);toast(`${added} record${added===1?"":"s"} imported`)}
+else toast("No valid rows found in CSV");
+}
+
+/* ---- Login gate & roles (advanced: lockout, remember-me, idle auto-logout) ---- */
+const ACCOUNTS={
+"6513":{pass:"Shayan1234",role:"admin",name:"ABDUL KAREEM",designation:"PROGRAMMER",department:"ETHICAL",section:"ADMINISTRATION",whatsapp:"923700813190"},
+"6360":{pass:"basit0321",role:"viewer",name:"ABDUL BASIT",designation:"MANAGER",department:"GREY & FINISH FOLDING",section:"PROCESSING",whatsapp:""},
+"2100":{pass:"viewer2026",role:"viewer",name:"QUALITY VIEWER",designation:"AUDITOR",department:"QUALITY ASSURANCE",section:"VIEW-ONLY",whatsapp:""},
+"5179":{pass:"msh1234",role:"viewer",name:"MUHAMMAD SARWER HUSSAIN",designation:"ASSISTANT MANAGER",department:"FINISH FOLDING",section:"PROCESSING",whatsapp:""}
+};
+const MAX_ATTEMPTS=5,LOCK_MS=60000,IDLE_LIMIT_MS=10*60000,IDLE_WARN_MS=60000;
+const ADMIN_WHATSAPP="923700813190";
+const OTP_TTL_MS=3*60000,OTP_MAX_ATTEMPTS=5,OTP_RESEND_COOLDOWN_MS=30000;
+function waSend(number,msg){try{let n=String(number||"").replace(/\D/g,"");window.open(`https://wa.me/${n}?text=${encodeURIComponent(msg)}`,"_blank")}catch(err){console.warn("WhatsApp open skipped:",err)}}
+function maskPhone(p){p=String(p||"").replace(/\D/g,"");if(p.length<5)return p||"—";return p.slice(0,3)+"•••"+p.slice(-2)}
+function loadDynamicAccounts(){try{let extra=JSON.parse(localStorage.getItem("ltDynamicAccounts")||"{}");Object.assign(ACCOUNTS,extra)}catch(err){console.warn("Dynamic accounts skipped:",err)}}
+function saveDynamicAccount(code,acc){try{let extra=JSON.parse(localStorage.getItem("ltDynamicAccounts")||"{}");extra[code]=acc;localStorage.setItem("ltDynamicAccounts",JSON.stringify(extra))}catch(err){console.warn("Dynamic account not saved:",err)}}
+function getPending(){try{return JSON.parse(localStorage.getItem("ltPendingRegs")||"[]")}catch(err){return[]}}
+function savePending(list){try{localStorage.setItem("ltPendingRegs",JSON.stringify(list))}catch(err){console.warn("Pending list not saved:",err)}}
+function getPendingResets(){try{return JSON.parse(localStorage.getItem("ltPendingResets")||"[]")}catch(err){return[]}}
+function savePendingResets(list){try{localStorage.setItem("ltPendingResets",JSON.stringify(list))}catch(err){console.warn("Pending resets not saved:",err)}}
+function updatePendingBadge(){let n=getPending().length+getPendingResets().length,b=$("pendingBadge");if(!b)return;b.textContent=n;b.style.display=n?"inline-flex":"none"}
+function renderApprovals(){renderPendingResets();let list=getPending(),box=$("pendingList");if(!box)return;if(!list.length){box.innerHTML='<div class="emptyState">No pending registration requests right now.</div>';return}
+box.innerHTML=list.map((r,i)=>`<div class="pendingCard">
+<div class="pinfo"><b>${safe(r.name)} — Code ${safe(r.code)}</b><span>${safe(r.designation)||"—"} • ${safe(r.department)||"—"}${r.phone?" • "+safe(r.phone):""}</span><span>Requested ${new Date(r.ts).toLocaleString()}</span></div>
+<div class="pactions">
+<span class="secureNote" style="color:#8bb4e1">Grants: Viewer (Read-only)</span>
+<button class="btn primary" data-approve="${i}">✔ Approve</button>
+<button class="btn" data-reject="${i}">✕ Reject</button>
+</div></div>`).join("");
+box.querySelectorAll("[data-approve]").forEach(btn=>btn.onclick=()=>{
+let i=+btn.dataset.approve,list2=getPending(),req=list2[i];if(!req)return;
+if(ACCOUNTS[req.code]){toast("That employee code already exists");return}
+let role="viewer";
+let acc={pass:req.pass,role,name:req.name,designation:req.designation||"STAFF",department:req.department||"GENERAL",section:"GENERAL",whatsapp:req.phone||""};
+ACCOUNTS[req.code]=acc;saveDynamicAccount(req.code,acc);
+list2.splice(i,1);savePending(list2);renderApprovals();updatePendingBadge();
+logActivity("auth",`Approved registration for ${req.name} (code ${req.code}, viewer)`);
+toast(`${req.name} approved as viewer (read-only)`);
+});
+box.querySelectorAll("[data-reject]").forEach(btn=>btn.onclick=()=>{
+let i=+btn.dataset.reject,list2=getPending(),req=list2[i];if(!req)return;
+if(!confirm(`Reject the registration request from ${req.name}?`))return;
+list2.splice(i,1);savePending(list2);renderApprovals();updatePendingBadge();
+logActivity("auth",`Rejected registration request from ${req.name} (code ${req.code})`);
+toast("Request rejected");
+});
+}
+function submitRegistration(e){e.preventDefault();
+let code=$("regCode").value.trim(),name=$("regName").value.trim(),desig=$("regDesig").value.trim(),dept=$("regDept").value.trim(),pass=$("regPass").value,pass2=$("regPass2").value,phone=$("regPhone").value.trim();
+let err=$("regErr");err.classList.remove("show");
+if(!code||!name||!pass){err.textContent="Employee code, name and password are required";err.classList.add("show");return}
+if(pass!==pass2){err.textContent="Passwords do not match";err.classList.add("show");return}
+if(pass.length<6){err.textContent="Password should be at least 6 characters";err.classList.add("show");return}
+if(ACCOUNTS[code]||getPending().some(r=>r.code===code)){err.textContent="That employee code is already registered or pending";err.classList.add("show");return}
+let list=getPending();list.push({code,name,designation:desig,department:dept,pass,phone,ts:new Date().toISOString()});savePending(list);
+updatePendingBadge();
+$("registerForm").reset();$("registerModal").classList.remove("open");
+toast("Request submitted — awaiting admin approval");
+try{let msg=`New Lucky Tex ERP access request%0AName: ${encodeURIComponent(name)}%0ACode: ${encodeURIComponent(code)}%0ADesignation: ${encodeURIComponent(desig||"-")}%0ADepartment: ${encodeURIComponent(dept||"-")}%0APhone: ${encodeURIComponent(phone||"-")}%0APlease review in the Approvals panel.`;window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${msg}`,"_blank")}catch(err){console.warn("WhatsApp notify skipped:",err)}
+}
+function renderPendingResets(){let list=getPendingResets(),box=$("pendingResetList");if(!box)return;if(!list.length){box.innerHTML='<div class="emptyState">No pending password reset requests right now.</div>';return}
+box.innerHTML=list.map((r,i)=>`<div class="pendingCard">
+<div class="pinfo"><b>${safe(r.name)} — Code ${safe(r.code)}</b><span>${r.note?safe(r.note):"No note provided"}</span><span>Requested ${new Date(r.ts).toLocaleString()}</span></div>
+<div class="pactions">
+<span class="secureNote" style="color:#8bb4e1">Sets a new password for this code</span>
+<button class="btn primary" data-approvereset="${i}">✔ Approve</button>
+<button class="btn" data-rejectreset="${i}">✕ Reject</button>
+</div></div>`).join("");
+box.querySelectorAll("[data-approvereset]").forEach(btn=>btn.onclick=()=>{
+let i=+btn.dataset.approvereset,list2=getPendingResets(),req=list2[i];if(!req)return;
+if(!ACCOUNTS[req.code]){toast("That employee code no longer exists");list2.splice(i,1);savePendingResets(list2);renderPendingResets();updatePendingBadge();return}
+let acc={...ACCOUNTS[req.code],pass:req.pass};
+ACCOUNTS[req.code]=acc;saveDynamicAccount(req.code,acc);
+list2.splice(i,1);savePendingResets(list2);renderPendingResets();updatePendingBadge();
+logActivity("reset",`Approved password reset for ${req.name} (code ${req.code})`);
+toast(`Password reset for ${req.name} approved`);
+});
+box.querySelectorAll("[data-rejectreset]").forEach(btn=>btn.onclick=()=>{
+let i=+btn.dataset.rejectreset,list2=getPendingResets(),req=list2[i];if(!req)return;
+if(!confirm(`Reject the password reset request from ${req.name}?`))return;
+list2.splice(i,1);savePendingResets(list2);renderPendingResets();updatePendingBadge();
+logActivity("reset",`Rejected password reset request from ${req.name} (code ${req.code})`);
+toast("Reset request rejected");
+});
+}
+function submitResetRequest(e){e.preventDefault();
+let code=$("resetCode").value.trim(),pass=$("resetPass").value,pass2=$("resetPass2").value,note=$("resetNote").value.trim();
+let err=$("resetErr");err.classList.remove("show");
+let acc=ACCOUNTS[code];
+if(!code||!pass){err.textContent="Employee code and new password are required";err.classList.add("show");return}
+if(!acc){err.textContent="No employee found with that code";err.classList.add("show");return}
+if(pass!==pass2){err.textContent="Passwords do not match";err.classList.add("show");return}
+if(pass.length<6){err.textContent="Password should be at least 6 characters";err.classList.add("show");return}
+if(getPendingResets().some(r=>r.code===code)){err.textContent="A reset request for this code is already pending";err.classList.add("show");return}
+let list=getPendingResets();list.push({code,name:acc.name,pass,note,ts:new Date().toISOString()});savePendingResets(list);
+updatePendingBadge();
+$("resetForm").reset();$("resetModal").classList.remove("open");
+toast("Reset request submitted — awaiting admin approval");
+logActivity("reset",`${acc.name} (code ${code}) requested a password reset`);
+waSend(ADMIN_WHATSAPP,`Lucky Tex ERP password reset request\nName: ${acc.name}\nCode: ${code}\nNote: ${note||"-"}\nPlease review in the Approvals panel.`);
+}
+let currentUser=null,currentRole=null,idleWarnTimer=null,idleCountdownIv=null,idleWatchStarted=false;
+function requireAdmin(){if(currentRole==="admin")return true;authAlert("You Are Not Authorize By Abdul Kareem");return false}
+function lockKey(u){return "ltLock_"+u}
+function lastLoginKey(u){return "ltLastLogin_"+u}
+function getLockState(u){try{return JSON.parse(localStorage.getItem(lockKey(u))||"null")}catch(err){return null}}
+function setLockState(u,st){try{localStorage.setItem(lockKey(u),JSON.stringify(st))}catch(err){}}
+function clearLockState(u){try{localStorage.removeItem(lockKey(u))}catch(err){}}
+function updateAttemptMeter(count){let m=$("attemptMeter");if(!count){m.style.display="none";[...m.children].forEach(s=>s.classList.remove("used"));return}m.style.display="flex";[...m.children].forEach((s,i)=>s.classList.toggle("used",i<count))}
+function startLockCountdown(u,until){let btn=$("connectBtn");btn.disabled=true;clearInterval(idleCountdownIv);let iv=setInterval(()=>{let left=Math.ceil((until-Date.now())/1000);if(left<=0){clearInterval(iv);btn.disabled=false;clearLockState(u);$("loginErr").classList.remove("show","lockmode");return}$("loginErr").textContent=`Too many failed attempts. Try again in ${left}s.`;$("loginErr").classList.add("show","lockmode")},250)}
+function fillEmpFields(code){let acc=ACCOUNTS[code];$("empName").value=acc?acc.name:"";$("empDesig").value=acc?acc.designation:"";$("empDept").value=acc?acc.department:"";$("empSection").value=acc?acc.section:""}
+function applyRole(user,role){currentUser=user;currentRole=role;let acc=ACCOUNTS[user]||{};document.body.classList.add("authed");document.body.classList.toggle("role-viewer",role==="viewer");document.body.classList.toggle("role-admin",role==="admin");let displayName=acc.name||user;let label=role==="admin"?`● ${displayName} • Admin`:`● ${displayName} • Viewer (Read-only)`;$("roleBadge").textContent=label;$("topRoleLabel").textContent=label;$("sidebarRole").textContent=role==="admin"?`Signed in: ${displayName} (Admin)`:`Signed in: ${displayName} (Viewer)`;let remembered=false;try{remembered=localStorage.getItem("ltRemember_"+user)==="1"}catch(err){}$("secBar").style.display="flex";$("secBarText").textContent=(remembered?"Device remembered":"Session secured")+" • auto-lock after 10m idle";startIdleWatch()}
+function checkAuth(){try{let user=sessionStorage.getItem("ltUser")||localStorage.getItem("ltUser"),role=sessionStorage.getItem("ltRole")||localStorage.getItem("ltRole");if(user&&role&&ACCOUNTS[user])applyRole(user,role)}catch(err){console.warn("Session check skipped:",err)}}
+function startIdleWatch(){if(idleWatchStarted)return;idleWatchStarted=true;["mousemove","mousedown","keydown","scroll","touchstart"].forEach(ev=>document.addEventListener(ev,resetIdleTimer,{passive:true}));resetIdleTimer()}
+function stopIdleWatch(){idleWatchStarted=false;clearTimeout(idleWarnTimer);clearInterval(idleCountdownIv);$("idleModal").classList.remove("open")}
+function resetIdleTimer(){if(!document.body.classList.contains("authed")||$("idleModal").classList.contains("open"))return;clearTimeout(idleWarnTimer);idleWarnTimer=setTimeout(showIdleWarning,IDLE_LIMIT_MS-IDLE_WARN_MS)}
+function showIdleWarning(){$("idleModal").classList.add("open");let secs=Math.floor(IDLE_WARN_MS/1000);$("idleCount").textContent=secs;clearInterval(idleCountdownIv);idleCountdownIv=setInterval(()=>{secs--;$("idleCount").textContent=secs;if(secs<=0){clearInterval(idleCountdownIv);$("idleModal").classList.remove("open");let nm=(ACCOUNTS[currentUser]||{}).name||currentUser;logActivity("auth",`${nm} auto-logged out (inactivity)`);doLogout();toast("Signed out due to inactivity")}},1000)}
+function showWelcome(name,roleLabel,done,lastLoginIso){
+let box=$("welcomeBox");
+$("welcomeName").textContent=name;
+$("welcomeRole").textContent=roleLabel;
+$("welcomeLast").textContent=lastLoginIso?("Last sign-in: "+new Date(lastLoginIso).toLocaleString()):"First sign-in on this device";
+box.classList.remove("leave");
+$("welcomeScreen").classList.add("show");
+void box.offsetWidth;
+box.classList.add("animate");
+setTimeout(()=>{
+box.classList.remove("animate");
+box.classList.add("leave");
+setTimeout(()=>{
+$("welcomeScreen").classList.remove("show");
+box.classList.remove("leave");
+done();
+},480);
+},3500);
+}
+/* ---- OTP / 2FA step (delivered via WhatsApp deep-link) ---- */
+let pendingOtp=null,otpCountdownIv=null;
+function genOtp(){return String(Math.floor(100000+Math.random()*900000))}
+function sendOtpNow(){if(!pendingOtp)return;let{code,user:u,acc}=pendingOtp;let hasNumber=!!acc.whatsapp;let target=hasNumber?acc.whatsapp:ADMIN_WHATSAPP;let msg=hasNumber?`Lucky Tex ERP sign-in code for ${acc.name} (Code ${u}): ${code}\nValid for 3 minutes. Do not share this code.`:`Lucky Tex ERP OTP relay needed.\nEmployee: ${acc.name} (Code ${u}) is signing in.\nOTP: ${code}\nNo WhatsApp number on file — please share this code with them.`;waSend(target,msg);pendingOtp.resendAt=Date.now()+OTP_RESEND_COOLDOWN_MS;updateResendBtn()}
+function updateResendBtn(){let btn=$("otpResendBtn");if(!btn||!pendingOtp)return;let wait=Math.ceil((pendingOtp.resendAt-Date.now())/1000);if(wait>0){btn.disabled=true;btn.textContent=`Resend via WhatsApp (${wait}s)`}else{btn.disabled=false;btn.textContent="Resend via WhatsApp"}}
+function startOtpCountdown(){clearInterval(otpCountdownIv);otpCountdownIv=setInterval(()=>{if(!pendingOtp){clearInterval(otpCountdownIv);return}let left=Math.ceil((pendingOtp.expiresAt-Date.now())/1000);if(left<=0){$("otpCountdown").textContent="0";$("otpErr").textContent="Code expired — tap Resend to get a new one";$("otpErr").classList.add("show");clearInterval(otpCountdownIv);return}$("otpCountdown").textContent=left;updateResendBtn()},250)}
+function startOtpStep(u,acc,remember){
+pendingOtp={code:genOtp(),user:u,acc,remember,expiresAt:Date.now()+OTP_TTL_MS,attempts:0,resendAt:0};
+$("pwFields").style.display="none";$("otpStep").style.display="block";
+$("otpErr").classList.remove("show");$("otpInput").value="";
+$("otpTargetLabel").textContent=acc.whatsapp?("your WhatsApp ("+maskPhone(acc.whatsapp)+")"):"the admin's WhatsApp for relay";
+logActivity("otp",`Password verified for ${acc.name} (code ${u}) — OTP generated and sent via WhatsApp`);
+sendOtpNow();startOtpCountdown();
+let cb=$("connectBtn");cb.classList.remove("busy");cb.disabled=false;let lbl=cb.querySelector(".btnLbl");if(lbl)lbl.textContent="Connect";
+setTimeout(()=>$("otpInput").focus(),50);
+}
+function cancelOtp(){clearInterval(otpCountdownIv);pendingOtp=null;$("otpStep").style.display="none";$("pwFields").style.display="block";$("otpErr").classList.remove("show")}
+function verifyOtp(){
+if(!pendingOtp)return;
+let val=$("otpInput").value.trim();
+if(Date.now()>pendingOtp.expiresAt){$("otpErr").textContent="Code expired — tap Resend to get a new one";$("otpErr").classList.add("show");return}
+if(val!==pendingOtp.code){
+pendingOtp.attempts++;
+logActivity("otp",`Incorrect OTP entered for code ${pendingOtp.user} (attempt ${pendingOtp.attempts}/${OTP_MAX_ATTEMPTS})`);
+let win=document.querySelector(".logonWindow");win.classList.remove("shake");void win.offsetWidth;win.classList.add("shake");
+if(pendingOtp.attempts>=OTP_MAX_ATTEMPTS){$("otpErr").textContent="Too many incorrect attempts — please sign in again";$("otpErr").classList.add("show");setTimeout(cancelOtp,1400);return}
+$("otpErr").textContent=`Incorrect code — ${OTP_MAX_ATTEMPTS-pendingOtp.attempts} attempt(s) left`;$("otpErr").classList.add("show");
+return;
+}
+clearInterval(otpCountdownIv);
+let{user:u,acc,remember}=pendingOtp;pendingOtp=null;
+completeLogin(u,acc,remember);
+}
+function completeLogin(u,acc,remember){
+let store=remember?localStorage:sessionStorage;
+try{sessionStorage.removeItem("ltUser");sessionStorage.removeItem("ltRole");localStorage.removeItem("ltUser");localStorage.removeItem("ltRole");store.setItem("ltUser",u);store.setItem("ltRole",acc.role);localStorage.setItem("ltRemember_"+u,remember?"1":"0")}catch(err){console.warn("Session not persisted:",err)}
+let prevLogin=null;try{prevLogin=localStorage.getItem(lastLoginKey(u))}catch(err){}
+try{localStorage.setItem(lastLoginKey(u),new Date().toISOString())}catch(err){}
+logActivity("auth",`${acc.name} logged in (${acc.role}) — OTP verified${remember?" • device remembered":""}`);
+let roleLabel=acc.role==="admin"?`${acc.designation} • ${acc.department}`:"Viewer Access • Read-only";
+let finish=()=>{$("otpStep").style.display="none";$("pwFields").style.display="block";applyRole(u,acc.role);$("loginForm").reset();fillEmpFields("");updateAttemptMeter(0);$("lastLoginTag").style.display="none";let cb=$("connectBtn");cb.classList.remove("busy");cb.disabled=false;let lbl=cb.querySelector(".btnLbl");if(lbl)lbl.textContent="Connect"};
+try{showWelcome(acc.name,roleLabel,finish,prevLogin)}catch(err){console.warn("Welcome animation skipped:",err);finish()}
+}
+function doLogin(e){e.preventDefault();let u=$("loginUser").value.trim(),p=$("loginPass").value,acc=ACCOUNTS[u],lock=getLockState(u),now=Date.now();
+if(lock&&lock.until>now){startLockCountdown(u,lock.until);let win=document.querySelector(".logonWindow");win.classList.remove("shake");void win.offsetWidth;win.classList.add("shake");return}
+if(acc&&acc.pass===p){
+clearLockState(u);updateAttemptMeter(0);
+let remember=$("rememberMe").checked;
+$("loginErr").classList.remove("show","lockmode");
+let cb=$("connectBtn");cb.classList.add("busy");cb.disabled=true;let lbl=cb.querySelector(".btnLbl");if(lbl)lbl.textContent="Verifying…";
+setTimeout(()=>startOtpStep(u,acc,remember),450);
+}else{
+let count=(lock&&lock.count||0)+1;
+if(count>=MAX_ATTEMPTS){let until=now+LOCK_MS;setLockState(u,{count:0,until});logActivity("auth",`Account ${u||"unknown"} locked after ${MAX_ATTEMPTS} failed attempts`);updateAttemptMeter(0);startLockCountdown(u,until)}
+else{setLockState(u,{count,until:0});$("loginErr").textContent="Incorrect employee code or password";$("loginErr").classList.remove("lockmode");$("loginErr").classList.add("show");updateAttemptMeter(count);logActivity("auth",`Failed login attempt for code ${u||"unknown"} (${count}/${MAX_ATTEMPTS})`)}
+let win=document.querySelector(".logonWindow");win.classList.remove("shake");void win.offsetWidth;win.classList.add("shake");
+}}
+function doLogout(){if(currentUser)logActivity("auth",`${(ACCOUNTS[currentUser]||{}).name||currentUser} logged out`);try{sessionStorage.removeItem("ltUser");sessionStorage.removeItem("ltRole");localStorage.removeItem("ltUser");localStorage.removeItem("ltRole")}catch(err){console.warn("Session clear skipped:",err)}document.body.classList.remove("authed","role-viewer","role-admin");currentUser=null;currentRole=null;$("roleBadge").textContent="●";$("topRoleLabel").textContent="";$("sidebarRole").textContent="—";$("secBar").style.display="none";stopIdleWatch()}
+
+initCloud();
+loadDynamicAccounts();
+checkAuth();
+updatePendingBadge();
+renderApprovals();
+renderLoginHistory();
+["typeFilter","shadeFilter","statusFilter"].forEach(id=>{let cur=$(id).value;$(id).innerHTML=`<option value="">All ${id==="typeFilter"?"Types":id==="shadeFilter"?"Shades":"Status"}</option>`;let k=id==="typeFilter"?"Type":id==="shadeFilter"?"Shade":"Status";unique(k).forEach(v=>{let o=document.createElement("option");o.value=v;o.textContent=v;$(id).appendChild(o)});$(id).value=cur});
+rows(data,"preview",8);rows(data,"inventoryTable");filter();bars("typeBars",sumBy(data,"Type"));bars("shadeBars",sumBy(data,"Shade"));bars("statusBars",sumBy(data,"Status"));bars("widthBars",sumBy(data,"Width"));bars("customerBars",sumBy(data,"Blend"));bars("qualityBars",sumBy(data,"Quality"));
+let total=data.reduce((n,r)=>n+meters(r),0);
+countUp("totalMeters",total);countUp("totalEntries",data.length);countUp("avgMeters",total/(data.length||1));countUp("customers",unique("Blend").length);
+donut("typeDonut","typeLegend",sumBy(data,"Type"));
+trendChart("trendChart");
+insights();
+renderLog();
+let cards=[["Total Fabric Meters",total],["Stock Records",data.length],["Blends",unique("Blend").length],["Shades",unique("Shade").length],["Qualities",unique("Quality").length],["Widths",unique("Width").length]];$("reportCards").innerHTML=cards.map(x=>`<div class="report"><small>${x[0]}</small><b>${fmt(x[1])}</b></div>`).join("");
+$("verification").innerHTML=[["Dataset Rows",data.length],["Total Meters",fmt(total)],["Non-zero Meter Rows",data.filter(r=>meters(r)!==0).length],["Blends",unique("Blend").length],["Qualities",unique("Quality").length],["Widths",unique("Width").length]].map(x=>`<div><small>${x[0]}</small><b>${x[1]}</b></div>`).join("");
+document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>{if(b.classList.contains("admin-only")&&!requireAdmin())return;go(b.dataset.page)});document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));["search","typeFilter","shadeFilter","statusFilter"].forEach(id=>$(id).oninput=()=>{page=1;filter()});$("resetBtn").onclick=()=>{["search","typeFilter","shadeFilter","statusFilter"].forEach(id=>$(id).value="");page=1;filter();toast("Filters reset")};$("printBtn").onclick=()=>print();$("pdfBtn").onclick=downloadPDF;$("shareBtn").onclick=shareReport;$("csvBtn").onclick=csv;$("closeModal").onclick=()=>$("modal").classList.remove("open");$("modal").onclick=e=>{if(e.target.id==="modal")$("modal").classList.remove("open")};$("themeBtn").onclick=toggleTheme;
+$("authAlert").onclick=()=>{$("authAlert").classList.remove("show");clearTimeout(authAlert._t)};
+$("loginForm").onsubmit=doLogin;$("logoutBtn").onclick=doLogout;
+(function initLogonFlair(){
+try{
+let wm=$("logonWordmark");
+if(wm){let txt=wm.textContent;wm.innerHTML="";[...txt].forEach((ch,i)=>{let s=document.createElement("span");s.className="lw";s.textContent=ch===" "?"\u00A0":ch;s.style.animationDelay=(i*0.045)+"s";wm.appendChild(s)})}
+let field=$("loginParticles");
+if(field){let n=22;for(let i=0;i<n;i++){let p=document.createElement("i");let size=(Math.random()*3+1.5).toFixed(1);p.style.width=size+"px";p.style.height=size+"px";p.style.left=(Math.random()*100)+"%";p.style.setProperty("--drift",(Math.random()*60-30)+"px");let dur=(Math.random()*10+9).toFixed(1);p.style.animationDuration=dur+"s";p.style.animationDelay=(Math.random()*dur).toFixed(1)+"s";field.appendChild(p)}}
+}catch(err){console.warn("Logon flair skipped:",err)}
+})();
+$("openRegisterBtn").onclick=()=>{$("registerForm").reset();$("regErr").classList.remove("show");$("registerModal").classList.add("open")};
+$("closeRegisterModal").onclick=()=>$("registerModal").classList.remove("open");
+$("cancelRegister").onclick=()=>$("registerModal").classList.remove("open");
+$("registerModal").onclick=e=>{if(e.target.id==="registerModal")$("registerModal").classList.remove("open")};
+$("registerForm").onsubmit=submitRegistration;
+$("openResetBtn").onclick=()=>{$("resetForm").reset();$("resetEmpName").value="";$("resetErr").classList.remove("show");$("resetModal").classList.add("open")};
+$("closeResetModal").onclick=()=>$("resetModal").classList.remove("open");
+$("cancelReset").onclick=()=>$("resetModal").classList.remove("open");
+$("resetModal").onclick=e=>{if(e.target.id==="resetModal")$("resetModal").classList.remove("open")};
+$("resetForm").onsubmit=submitResetRequest;
+$("resetCode").oninput=e=>{let acc=ACCOUNTS[e.target.value.trim()];$("resetEmpName").value=acc?acc.name:""};
+$("otpVerifyBtn").onclick=verifyOtp;
+$("otpInput").oninput=e=>{e.target.value=e.target.value.replace(/\D/g,"").slice(0,6)};
+$("otpInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();verifyOtp()}});
+$("otpResendBtn").onclick=()=>{if(!pendingOtp||Date.now()<pendingOtp.resendAt)return;pendingOtp.code=genOtp();pendingOtp.expiresAt=Date.now()+OTP_TTL_MS;pendingOtp.attempts=0;$("otpErr").classList.remove("show");sendOtpNow();startOtpCountdown();toast("New code sent via WhatsApp")};
+$("otpBackBtn").onclick=()=>{if(pendingOtp)logActivity("otp",`OTP step cancelled for code ${pendingOtp.user}`);cancelOtp()};
+$("pwEye").onclick=()=>{let inp=$("loginPass"),isPass=inp.type==="password";inp.type=isPass?"text":"password";$("pwEye").textContent=isPass?"🙈":"👁"};
+$("idleStayBtn").onclick=()=>{clearInterval(idleCountdownIv);$("idleModal").classList.remove("open");resetIdleTimer();toast("Session extended")};
+$("idleLogoutBtn").onclick=()=>{clearInterval(idleCountdownIv);$("idleModal").classList.remove("open");doLogout();toast("Signed out")};
+$("loginUser").oninput=e=>{
+let code=e.target.value.trim();
+fillEmpFields(code);
+$("loginErr").classList.remove("show","lockmode");
+$("connectBtn").disabled=false;
+let lock=getLockState(code);
+if(lock&&lock.until>Date.now())startLockCountdown(code,lock.until);
+else updateAttemptMeter(lock&&lock.count?lock.count:0);
+let last=null;try{last=localStorage.getItem(lastLoginKey(code))}catch(err){}
+if(code&&ACCOUNTS[code]&&last){$("lastLoginTag").style.display="flex";$("lastLoginVal").textContent=new Date(last).toLocaleString()}
+else $("lastLoginTag").style.display="none";
+};
+$("killSessionBtn").onclick=()=>{$("loginForm").reset();fillEmpFields("");$("loginErr").classList.remove("show","lockmode");updateAttemptMeter(0);$("lastLoginTag").style.display="none";$("pwEye").textContent="👁";$("loginPass").type="password"};
+$("exitBtn").onclick=()=>{if(confirm("Exit the LOGON screen?"))window.close()};
+$("waContactBtn").onclick=()=>window.open("https://wa.me/923700813190","_blank");
+$("addBtn").onclick=()=>openForm("add",null);
+$("editFromModal").onclick=()=>{let title=$("modalTitle").textContent;let sno=title.replace("Record #","");let rec=data.find(r=>String(r["SNo"])===sno);if(rec)editRecord(rec)};
+$("deleteFromModal").onclick=()=>{let title=$("modalTitle").textContent;let sno=title.replace("Record #","");let rec=data.find(r=>String(r["SNo"])===sno);if(rec)deleteRecord(rec)};
+$("recordForm").onsubmit=submitForm;
+$("cancelForm").onclick=()=>$("formModal").classList.remove("open");
+$("closeFormModal").onclick=()=>$("formModal").classList.remove("open");
+$("formModal").onclick=e=>{if(e.target.id==="formModal")$("formModal").classList.remove("open")};
+$("importBtn").onclick=()=>{if(!requireAdmin())return;$("importFile").click()};
+$("importFile").onchange=e=>{let f=e.target.files[0];if(!f)return;let reader=new FileReader();reader.onload=ev=>importCSV(ev.target.result);reader.readAsText(f);e.target.value=""};
+$("backupBtn").onclick=()=>{if(!requireAdmin())return;backupData()};
+$("restoreBtn").onclick=()=>{if(!requireAdmin())return;$("restoreFile").click()};
+$("restoreFile").onchange=e=>{let f=e.target.files[0];if(!f)return;let reader=new FileReader();reader.onload=ev=>restoreData(ev.target.result);reader.readAsText(f);e.target.value=""};
+$("clearLogBtn").onclick=()=>{if(!requireAdmin())return;if(!confirm("Clear the entire activity log?"))return;activityLog=[];saveLog();renderLog();toast("Activity log cleared")};
+})();
+</script>
+</body></html>
